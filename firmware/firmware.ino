@@ -35,7 +35,7 @@ void loop(void) {
 bool gotReadTempCommand(void) {
   while (Serial.available() > 0) {
     String received = Serial.readString();
-    if (received.equals("READTEMP")) {
+    if (received.equals("READTEMP\n")) {
       return true;
     } else {
       Serial.println("ERROR: Unknown command: " + received + ".");
