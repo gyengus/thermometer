@@ -3,6 +3,9 @@
 
 #define LED 13
 #define ONEWIREPIN 16
+#define WAIT_FOR_TEMPERATURE 750
+#define LED_SHORT_DELAY 100
+#define LED_LONG_DELAY 2000
 
 OneWire  ds(ONEWIREPIN);  // A2
 auto timer = timer_create_default();
@@ -14,7 +17,7 @@ void setup(void) {
   pinMode(LED, OUTPUT);
   Serial.begin(57600);
   detectSensor();
-  timer.every(2000, toggle_led);
+  timer.every(LED_LONG_DELAY, toggle_led);
 }
 
 void loop(void) {
@@ -114,9 +117,9 @@ bool isCRCValid(byte data[9], byte index) {
 bool toggle_led(void *) {
   byte ledState = digitalRead(LED);
   if (ledState) {
-    timer.every(2000, toggle_led);
+    timer.every(LED_LONG_DELAY, toggle_led);
   } else {
-    timer.every(250, toggle_led);
+    timer.every(LED_SHORT_DELAY, toggle_led);
   }
   digitalWrite(LED, !ledState);
   return false;
