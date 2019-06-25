@@ -12,6 +12,8 @@ auto timer = timer_create_default();
 
 byte data[9];
 byte type_s;
+float temperature;
+bool inProgress = false;
 
 void setup(void) {
   pinMode(LED, OUTPUT);
@@ -21,18 +23,36 @@ void setup(void) {
 }
 
 void loop(void) {
+  if (!inProgress) {
+    continuousMeasurement();
+  }
   if (gotReadTempCommand()) {
-    startConvertT();  
-    delay(750);
-    readTemp();
-    if (isCRCValid(data, 8)) {
-      Serial.println(convertTemp());
-    } else {
-      Serial.println("ERROR: CRC is invalid");
-    }
+    Serial.println(temperature);
   }
 
   timer.tick();
+}
+
+bool continuousMeasurement() {
+  inProgress = true;
+  startConvertT();
+  timer.in(WAIT_FOR_TEMPERATURE, [](void*) -> bool {
+    readTemp();
+    if (isCRCValid(data, 8)) {
+      float temp = convertTemp();
+      if (temp == 85) {
+        Serial.println("ERROR: Something went wrong, got 85");
+      } else {
+        temperature = temp;
+      }
+    } else {
+      Serial.println("ERROR: CRC is invalid");
+    }
+    inProgress = false;
+    return false;
+  });
+
+  return false;
 }
 
 bool gotReadTempCommand(void) {
@@ -108,7 +128,6 @@ void detectSensor(void) {
 
 bool isCRCValid(byte data[9], byte index) {
   if (OneWire::crc8(data, index) != data[index]) {
-      Serial.println("ERROR: CRC is not valid!");
       return false;
   }
   return true;
