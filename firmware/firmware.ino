@@ -2,12 +2,14 @@
 #include <timer.h>
 
 #define LED 13
-#define ONEWIREPIN 16
+#define ONEWIREPIN 16 /* A2 */
 #define WAIT_FOR_TEMPERATURE 750
 #define LED_SHORT_DELAY 100
 #define LED_LONG_DELAY 2000
+#define ERROR_PREFIX String("ERROR: ")
+#define READTEMP_CMD "READTEMP\n"
 
-OneWire  ds(ONEWIREPIN);  // A2
+OneWire  ds(ONEWIREPIN);
 auto timer = timer_create_default();
 
 byte data[9];
@@ -41,12 +43,12 @@ bool continuousMeasurement() {
     if (isCRCValid(data, 8)) {
       float temp = convertTemp();
       if (temp == 85) {
-        Serial.println("ERROR: Something went wrong, got 85");
+        Serial.println(ERROR_PREFIX + "Something went wrong, got 85");
       } else {
         temperature = temp;
       }
     } else {
-      Serial.println("ERROR: CRC is invalid");
+      Serial.println(ERROR_PREFIX + "Temperature's CRC is invalid.");
     }
     inProgress = false;
     return false;
@@ -58,10 +60,10 @@ bool continuousMeasurement() {
 bool gotReadTempCommand(void) {
   while (Serial.available() > 0) {
     String received = Serial.readString();
-    if (received.equals("READTEMP\n")) {
+    if (received.equals(READTEMP_CMD)) {
       return true;
     } else {
-      Serial.println("ERROR: Unknown command: " + received + ".");
+      Serial.println(ERROR_PREFIX + "Unknown command: " + received + ".");
       return false;
     }
   }
@@ -103,12 +105,12 @@ float convertTemp(void) {
 void detectSensor(void) {
   byte addr[8];
   if (!ds.search(addr)) {
-    Serial.println("ERROR: No sensor detected.");
+    Serial.println(ERROR_PREFIX + "No sensor detected.");
     halt();
   }
 
   if (!isCRCValid(addr, 7)) {
-    Serial.println("ERROR: Sensor address's CRC is invalid");
+    Serial.println(ERROR_PREFIX + "Sensor address's CRC is invalid");
     halt();
   }
 
@@ -121,7 +123,7 @@ void detectSensor(void) {
       type_s = 0;
       break;
     default:
-      Serial.println("ERROR: Device is not a DS18x20 family device.");
+      Serial.println(ERROR_PREFIX + "Device is not a DS18x20 family device.");
       halt();
   }
 }
