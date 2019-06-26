@@ -9,6 +9,8 @@
 #define ERROR_PREFIX String("ERROR: ")
 #define READTEMP_CMD "READTEMP\n"
 
+enum ledStates {longOff, firstShortOn, shortOff, secondShortOn};
+
 OneWire  ds(ONEWIREPIN);
 auto timer = timer_create_default();
 
@@ -16,6 +18,7 @@ byte data[9];
 byte type_s;
 float temperature;
 bool inProgress = false;
+int ledState = longOff;
 
 void setup(void) {
   pinMode(LED, OUTPUT);
@@ -135,14 +138,27 @@ bool isCRCValid(byte data[9], byte index) {
   return true;
 }
 
-bool toggle_led(void *) {
-  byte ledState = digitalRead(LED);
-  if (ledState) {
-    timer.every(LED_LONG_DELAY, toggle_led);
-  } else {
-    timer.every(LED_SHORT_DELAY, toggle_led);
+bool toggle_led(void) {
+  ledState++;
+  if (ledState > secondShortOn) ledState = longOff;
+  switch (ledState) {
+    case longOff:
+      digitalWrite(LED, 0);
+      timer.every(LED_LONG_DELAY, toggle_led);
+      break;
+    case firstShortOn:
+      digitalWrite(LED, 1);
+      timer.every(LED_SHORT_DELAY, toggle_led);
+      break;
+    case shortOff:
+      digitalWrite(LED, 0);
+      timer.every(LED_SHORT_DELAY, toggle_led);
+      break;
+    case secondShortOn:
+      digitalWrite(LED, 1);
+      timer.every(LED_SHORT_DELAY, toggle_led);
+      break;
   }
-  digitalWrite(LED, !ledState);
   return false;
 }
 
