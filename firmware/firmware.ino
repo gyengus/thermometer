@@ -1,13 +1,6 @@
 #include <OneWire.h>
 #include <timer.h>
-
-#define LED 13
-#define ONEWIREPIN 16 /* A2 */
-#define WAIT_FOR_TEMPERATURE 750
-#define LED_SHORT_DELAY 100
-#define LED_LONG_DELAY 2000
-#define ERROR_PREFIX String("ERROR: ")
-#define READTEMP_CMD "READTEMP\n"
+#include "config.h"
 
 enum ledStates {longOff, firstShortOn, shortOff, secondShortOn};
 

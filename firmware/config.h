@@ -1,0 +1,7 @@
+#define LED 13
+#define ONEWIREPIN 2
+#define WAIT_FOR_TEMPERATURE 750
+#define LED_SHORT_DELAY 100
+#define LED_LONG_DELAY 2000
+#define ERROR_PREFIX String("ERROR: ")
+#define READTEMP_CMD "READTEMP\n"
