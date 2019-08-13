@@ -2,7 +2,7 @@
 #include <timer.h>
 #include "config.h"
 
-enum ledStates {longOff, firstShortOn, shortOff, secondShortOn};
+enum ledStates { longOff, firstShortOn, shortOff, secondShortOn };
 
 OneWire  ds(ONEWIREPIN);
 auto timer = timer_create_default();
@@ -11,6 +11,7 @@ byte data[9];
 byte type_s;
 float temperature;
 bool inProgress = false;
+unsigned long lastMeasureTime = 0;
 int ledState = longOff;
 
 void setup(void) {
@@ -21,7 +22,8 @@ void setup(void) {
 }
 
 void loop(void) {
-  if (!inProgress) {
+  unsigned long now = millis();
+  if (!inProgress && ((lastMeasureTime == 0) || (now - lastMeasureTime) >= MEASURE_DELAY)) {
     continuousMeasurement();
   }
   if (gotReadTempCommand()) {
@@ -46,6 +48,7 @@ bool continuousMeasurement() {
     } else {
       Serial.println(ERROR_PREFIX + "Temperature's CRC is invalid.");
     }
+    lastMeasureTime = millis();
     inProgress = false;
     return false;
   });
