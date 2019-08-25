@@ -1,0 +1,45 @@
+plugins {
+	id 'org.springframework.boot' version '2.2.0.M3'
+	id 'java'
+}
+
+apply plugin: 'io.spring.dependency-management'
+apply plugin: "jacoco"
+
+group = 'hu.gyengus'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+	maven { url 'https://repo.spring.io/snapshot' }
+	maven { url 'https://repo.spring.io/milestone' }
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+		exclude group: 'junit', module: 'junit'
+	}
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.9'
+	// https://mvnrepository.com/artifact/com.fazecast/jSerialComm
+	compile group: 'com.fazecast', name: 'jSerialComm', version: '2.5.1'
+	// https://mvnrepository.com/artifact/ch.qos.logback/logback-core
+	compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
+}
+
+test {
+	useJUnitPlatform()
+}
+
+project.tasks["jacocoTestReport"].dependsOn "build"
+project.tasks["jacocoTestCoverageVerification"].dependsOn "jacocoTestReport"
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled = true
+    }
+}

@@ -1,0 +1,10 @@
+<configuration debug="false" scan="true" scanPeriod="30 seconds">
+    <appender name="static-appender" class="com.epam.training.sportsbetting.common.StaticAppender">
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+    <root level="info">
+        <appender-ref ref="static-appender" />
+    </root>
+</configuration>
