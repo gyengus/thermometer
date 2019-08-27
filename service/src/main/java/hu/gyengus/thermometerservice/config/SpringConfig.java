@@ -11,11 +11,11 @@ import hu.gyengus.thermometerservice.thermometer.Thermometer;
 public class SpringConfig {
     @Bean
     public Thermometer thermometer() {
-        return new ArduinoThermometer(serialPort());
+        return new ArduinoThermometer(serialPortHandler());
     }
     
     @Bean
-    public SerialPortHandler serialPort() {
+    public SerialPortHandler serialPortHandler() {
         return null;
     }
 }
