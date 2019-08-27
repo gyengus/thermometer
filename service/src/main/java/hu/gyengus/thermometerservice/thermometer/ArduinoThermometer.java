@@ -28,7 +28,11 @@ public class ArduinoThermometer implements Thermometer {
     }
 
     private void sendReadCommand() {
-        serialPort.write("READTEMP\n");
+        sendCommand("READTEMP");
+    }
+    
+    private void sendCommand(final String command) {
+        serialPort.write(command + "\n");
     }
     
     private String readAnswer() {
