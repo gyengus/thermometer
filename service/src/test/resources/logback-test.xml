@@ -1,5 +1,5 @@
 <configuration debug="false" scan="true" scanPeriod="30 seconds">
-    <appender name="static-appender" class="com.epam.training.sportsbetting.common.StaticAppender">
+    <appender name="static-appender" class="hu.gyengus.thermometerservice.StaticAppender">
         <encoder>
             <pattern>%msg%n</pattern>
         </encoder>
