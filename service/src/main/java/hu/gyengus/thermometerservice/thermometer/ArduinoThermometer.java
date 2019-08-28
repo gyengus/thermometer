@@ -10,8 +10,8 @@ public class ArduinoThermometer implements Thermometer {
     private static final Logger LOG = LoggerFactory.getLogger(ArduinoThermometer.class);
     private SerialPortHandler serialPort;
 
-    public ArduinoThermometer(SerialPortHandler serialPort) {
-        this.serialPort = serialPort;
+    public ArduinoThermometer(SerialPortHandler serialPortHandler) {
+        this.serialPort = serialPortHandler;
     }
 
     @Override
