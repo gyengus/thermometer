@@ -22,7 +22,7 @@ public class ArduinoThermometer implements Thermometer {
             sendReadCommand();
             temperature = new Temperature(parseAnswer(readAnswer()));
         } catch (Exception e) {
-            LOG.error(e.getMessage());
+            LOG.error("Error when requesting temperature: " + e.getMessage());
         }
         return temperature;
     }
