@@ -1,6 +1,7 @@
 package hu.gyengus.thermometerservice.thermometer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,32 +63,38 @@ class ArduinoThermometerTest {
     @Test
     void testGetTemperatureShouldLogErrorWhenGotAnError() {
         // GIVEN
+        final String expectedErrorMessage = "Error when requesting temperature: Something went wrong";
         StaticAppender.clearEvents();
         BDDMockito.given(serialPort.isOpen()).willReturn(true);
         BDDMockito.given(serialPort.read()).willReturn("ERROR: Something went wrong");
         // WHEN
-        underTest.getTemperature();
+        Executable callGetTemperature = () -> underTest.getTemperature();
         // THEN
+        ThermometerException e = assertThrows(ThermometerException.class, callGetTemperature);
         BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpen();
         BDDMockito.verify(serialPort, BDDMockito.times(0)).open();
         BDDMockito.verify(serialPort, BDDMockito.times(1)).write("READTEMP\n");
         BDDMockito.verify(serialPort, BDDMockito.times(1)).read();
-        assertEquals("Error when requesting temperature: Something went wrong", StaticAppender.getEvents().get(0).getMessage());
+        assertEquals(expectedErrorMessage, StaticAppender.getEvents().get(0).getMessage());
+        assertEquals(expectedErrorMessage, e.getMessage());
     }
 
     @Test
     void testGetTemperatureShouldLogErrorWhenSerialPortIsClosedAndCanNotOpen() {
         // GIVEN
+        final String expectedErrorMessage = "Error when requesting temperature: Unable to open serial port.";
         StaticAppender.clearEvents();
         BDDMockito.given(serialPort.isOpen()).willReturn(false);
         BDDMockito.given(serialPort.open()).willReturn(false);
         // WHEN
-        underTest.getTemperature();
+        Executable callGetTemperature = () -> underTest.getTemperature();
         // THEN
+        ThermometerException e = assertThrows(ThermometerException.class, callGetTemperature);
         BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpen();
         BDDMockito.verify(serialPort, BDDMockito.times(1)).open();
         BDDMockito.verify(serialPort, BDDMockito.times(0)).write("READTEMP\n");
         BDDMockito.verify(serialPort, BDDMockito.times(0)).read();
-        assertEquals("Error when requesting temperature: Unable to open serial port.", StaticAppender.getEvents().get(0).getMessage());
+        assertEquals(expectedErrorMessage, StaticAppender.getEvents().get(0).getMessage());
+        assertEquals(expectedErrorMessage, e.getMessage());
     }
 }
