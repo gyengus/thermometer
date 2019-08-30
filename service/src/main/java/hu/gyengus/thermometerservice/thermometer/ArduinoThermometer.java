@@ -16,7 +16,7 @@ public class ArduinoThermometer implements Thermometer {
 
     @Override
     public Temperature getTemperature() {
-        Temperature temperature = new Temperature(85.2);
+        Temperature temperature;
         try {
             openConnectionIfNeeded();
             sendReadCommand();
