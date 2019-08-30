@@ -1,10 +1,8 @@
 <configuration debug="false" scan="true" scanPeriod="30 seconds">
-    <appender name="static-appender" class="hu.gyengus.thermometerservice.StaticAppender">
-        <encoder>
-            <pattern>%msg%n</pattern>
-        </encoder>
-    </appender>
-    <root level="info">
-        <appender-ref ref="static-appender" />
-    </root>
+	<appender name="static-appender" class="hu.gyengus.thermometerservice.StaticAppender">
+	</appender>
+	<root level="error">
+		<appender-ref ref="static-appender" />
+	</root>
+    <logger name="org.springframework" level="trace" />
 </configuration>
