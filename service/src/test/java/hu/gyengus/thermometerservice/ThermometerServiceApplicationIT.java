@@ -32,5 +32,42 @@ class ThermometerServiceApplicationIT {
         MvcResult result = mvc.perform(get("/")).andReturn();
         // THEN
         assertEquals("{\"measurement\":\"°C\",\"temperature\":3.14}", result.getResponse().getContentAsString());
+        assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    void testHomeEndpointShouldReturnErrorWhenSerialConnectionIsFail() throws Exception {
+        // GIVEN
+        Mockito.when(serialPortHandler.isOpen()).thenReturn(false);
+        Mockito.when(serialPortHandler.open()).thenReturn(false);
+        // WHEN
+        MvcResult result = mvc.perform(get("/")).andReturn();
+        // THEN
+        assertEquals("{\"status\":500,\"message\":\"Error when requesting temperature: Unable to open serial port.\"}", result.getResponse().getContentAsString());
+        assertEquals(500, result.getResponse().getStatus());
+    }
+
+    @Test
+    void testHomeEndpointShouldReturnErrorWhenSerialConnectionIsOKButGotError() throws Exception {
+        // GIVEN
+        Mockito.when(serialPortHandler.isOpen()).thenReturn(true);
+        Mockito.when(serialPortHandler.read()).thenReturn("ERROR: Something went wrong");
+        // WHEN
+        MvcResult result = mvc.perform(get("/")).andReturn();
+        // THEN
+        assertEquals("{\"status\":500,\"message\":\"Error when requesting temperature: Something went wrong\"}", result.getResponse().getContentAsString());
+        assertEquals(500, result.getResponse().getStatus());
+    }
+
+    @Test
+    void testHomeEndpointShouldReturnErrorWhenTemperatureIsNaN() throws Exception {
+        // GIVEN
+        Mockito.when(serialPortHandler.isOpen()).thenReturn(true);
+        Mockito.when(serialPortHandler.read()).thenReturn("Not a number");
+        // WHEN
+        MvcResult result = mvc.perform(get("/")).andReturn();
+        // THEN
+        assertEquals("{\"status\":500,\"message\":\"Error when requesting temperature: For input string: \\\"Not a number\\\"\"}", result.getResponse().getContentAsString());
+        assertEquals(500, result.getResponse().getStatus());
     }
 }
