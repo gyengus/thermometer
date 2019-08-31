@@ -9,8 +9,6 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import hu.gyengus.thermometerservice.domain.Temperature;
 import hu.gyengus.thermometerservice.thermometer.Thermometer;
@@ -48,11 +46,8 @@ class ThermometerServiceApplicationTest {
         // WHEN
         Executable callHome = () -> underTest.home();
         // THEN
-        ResponseStatusException e = assertThrows(ResponseStatusException.class, callHome);
-        assertEquals("Something went wrong", StaticAppender.getEvents().get(0).getMessage());
-        assertEquals("500 INTERNAL_SERVER_ERROR \"Error\"; nested exception is hu.gyengus.thermometerservice.thermometer.ThermometerException: Something went wrong", e.getMessage());
-        assertEquals("Error", e.getReason());
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, e.getStatus());
+        ThermometerException e = assertThrows(ThermometerException.class, callHome);
+        assertEquals("Something went wrong", e.getMessage());
     }
 
 }
