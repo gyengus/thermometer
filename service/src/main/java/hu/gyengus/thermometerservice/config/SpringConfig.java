@@ -3,7 +3,7 @@ package hu.gyengus.thermometerservice.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import hu.gyengus.thermometerservice.serial.SerialPortHandler;
+import hu.gyengus.thermometerservice.serial.SerialPort;
 import hu.gyengus.thermometerservice.thermometer.ArduinoThermometer;
 import hu.gyengus.thermometerservice.thermometer.Thermometer;
 
@@ -11,11 +11,11 @@ import hu.gyengus.thermometerservice.thermometer.Thermometer;
 public class SpringConfig {
     @Bean
     public Thermometer thermometer() {
-        return new ArduinoThermometer(serialPortHandler());
+        return new ArduinoThermometer(serialPort());
     }
     
     @Bean
-    public SerialPortHandler serialPortHandler() {
+    public SerialPort serialPort() {
         return null;
     }
 }

@@ -4,14 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.gyengus.thermometerservice.domain.Temperature;
-import hu.gyengus.thermometerservice.serial.SerialPortHandler;
+import hu.gyengus.thermometerservice.serial.SerialPort;
 
 public class ArduinoThermometer implements Thermometer {
     private static final Logger LOG = LoggerFactory.getLogger(ArduinoThermometer.class);
-    private SerialPortHandler serialPort;
+    private SerialPort serialPort;
 
-    public ArduinoThermometer(SerialPortHandler serialPortHandler) {
-        this.serialPort = serialPortHandler;
+    public ArduinoThermometer(SerialPort serialPort) {
+        this.serialPort = serialPort;
     }
 
     @Override

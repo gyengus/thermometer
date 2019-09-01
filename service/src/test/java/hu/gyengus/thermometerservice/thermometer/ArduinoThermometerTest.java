@@ -12,12 +12,12 @@ import org.mockito.MockitoAnnotations;
 
 import hu.gyengus.thermometerservice.StaticAppender;
 import hu.gyengus.thermometerservice.domain.Temperature;
-import hu.gyengus.thermometerservice.serial.SerialPortHandler;
+import hu.gyengus.thermometerservice.serial.SerialPort;
 
 class ArduinoThermometerTest {
 
     @Mock
-    private SerialPortHandler serialPort;
+    private SerialPort serialPort;
 
     private Thermometer underTest;
 
