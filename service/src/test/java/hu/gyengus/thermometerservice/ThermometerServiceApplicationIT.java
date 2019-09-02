@@ -12,13 +12,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import hu.gyengus.thermometerservice.serial.SerialPort;
+import hu.gyengus.thermometerservice.serial.SerialPortClient;
 
 @SpringBootTest(classes = { ThermometerServiceApplication.class })
 @AutoConfigureMockMvc
 class ThermometerServiceApplicationIT {
     @MockBean
-    private SerialPort serialPort;
+    private SerialPortClient serialPortClient;
 
     @Autowired
     private MockMvc mvc;
@@ -26,8 +26,8 @@ class ThermometerServiceApplicationIT {
     @Test
     void testHomeEndpointShouldReturnTemperatureWhenSerialConnectionIsOK() throws Exception {
         // GIVEN
-        Mockito.when(serialPort.isOpen()).thenReturn(true);
-        Mockito.when(serialPort.read()).thenReturn("3.14");
+        Mockito.when(serialPortClient.isOpen()).thenReturn(true);
+        Mockito.when(serialPortClient.read()).thenReturn("3.14");
         // WHEN
         MvcResult result = mvc.perform(get("/")).andReturn();
         // THEN
@@ -38,8 +38,8 @@ class ThermometerServiceApplicationIT {
     @Test
     void testHomeEndpointShouldReturnErrorWhenSerialConnectionIsFail() throws Exception {
         // GIVEN
-        Mockito.when(serialPort.isOpen()).thenReturn(false);
-        Mockito.when(serialPort.open()).thenReturn(false);
+        Mockito.when(serialPortClient.isOpen()).thenReturn(false);
+        Mockito.when(serialPortClient.open()).thenReturn(false);
         // WHEN
         MvcResult result = mvc.perform(get("/")).andReturn();
         // THEN
@@ -50,8 +50,8 @@ class ThermometerServiceApplicationIT {
     @Test
     void testHomeEndpointShouldReturnErrorWhenSerialConnectionIsOKButGotError() throws Exception {
         // GIVEN
-        Mockito.when(serialPort.isOpen()).thenReturn(true);
-        Mockito.when(serialPort.read()).thenReturn("ERROR: Something went wrong");
+        Mockito.when(serialPortClient.isOpen()).thenReturn(true);
+        Mockito.when(serialPortClient.read()).thenReturn("ERROR: Something went wrong");
         // WHEN
         MvcResult result = mvc.perform(get("/")).andReturn();
         // THEN
@@ -62,8 +62,8 @@ class ThermometerServiceApplicationIT {
     @Test
     void testHomeEndpointShouldReturnErrorWhenTemperatureIsNaN() throws Exception {
         // GIVEN
-        Mockito.when(serialPort.isOpen()).thenReturn(true);
-        Mockito.when(serialPort.read()).thenReturn("Not a number");
+        Mockito.when(serialPortClient.isOpen()).thenReturn(true);
+        Mockito.when(serialPortClient.read()).thenReturn("Not a number");
         // WHEN
         MvcResult result = mvc.perform(get("/")).andReturn();
         // THEN

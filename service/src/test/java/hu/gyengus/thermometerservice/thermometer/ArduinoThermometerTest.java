@@ -12,51 +12,51 @@ import org.mockito.MockitoAnnotations;
 
 import hu.gyengus.thermometerservice.StaticAppender;
 import hu.gyengus.thermometerservice.domain.Temperature;
-import hu.gyengus.thermometerservice.serial.SerialPort;
+import hu.gyengus.thermometerservice.serial.SerialPortClient;
 
 class ArduinoThermometerTest {
 
     @Mock
-    private SerialPort serialPort;
+    private SerialPortClient serialPortClient;
 
     private Thermometer underTest;
 
     @BeforeEach
     void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        underTest = new ArduinoThermometer(serialPort);
+        underTest = new ArduinoThermometer(serialPortClient);
     }
 
     @Test
     void testGetTemperatureWhenSerialPortIsClosedAndOpenIsOK() {
         // GIVEN
-        BDDMockito.given(serialPort.isOpen()).willReturn(false);
-        BDDMockito.given(serialPort.open()).willReturn(true);
+        BDDMockito.given(serialPortClient.isOpen()).willReturn(false);
+        BDDMockito.given(serialPortClient.open()).willReturn(true);
         double temperature = 11.1;
-        BDDMockito.given(serialPort.read()).willReturn(Double.toString(temperature));
+        BDDMockito.given(serialPortClient.read()).willReturn(Double.toString(temperature));
         // WHEN
         Temperature actual = underTest.getTemperature();
         // THEN
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpen();
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).open();
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).write("READTEMP\n");
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).read();
+        BDDMockito.verify(serialPortClient, BDDMockito.times(1)).isOpen();
+        BDDMockito.verify(serialPortClient, BDDMockito.times(1)).open();
+        BDDMockito.verify(serialPortClient, BDDMockito.times(1)).write("READTEMP\n");
+        BDDMockito.verify(serialPortClient, BDDMockito.times(1)).read();
         assertEquals(temperature, actual.getTemperature());
     }
 
     @Test
     void testGetTemperatureWhenSerialPortIsOpen() {
         // GIVEN
-        BDDMockito.given(serialPort.isOpen()).willReturn(true);
+        BDDMockito.given(serialPortClient.isOpen()).willReturn(true);
         double temperature = 11.1;
-        BDDMockito.given(serialPort.read()).willReturn(Double.toString(temperature));
+        BDDMockito.given(serialPortClient.read()).willReturn(Double.toString(temperature));
         // WHEN
         Temperature actual = underTest.getTemperature();
         // THEN
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpen();
-        BDDMockito.verify(serialPort, BDDMockito.times(0)).open();
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).write("READTEMP\n");
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).read();
+        BDDMockito.verify(serialPortClient, BDDMockito.times(1)).isOpen();
+        BDDMockito.verify(serialPortClient, BDDMockito.times(0)).open();
+        BDDMockito.verify(serialPortClient, BDDMockito.times(1)).write("READTEMP\n");
+        BDDMockito.verify(serialPortClient, BDDMockito.times(1)).read();
         assertEquals(temperature, actual.getTemperature());
     }
 
@@ -65,16 +65,16 @@ class ArduinoThermometerTest {
         // GIVEN
         final String expectedErrorMessage = "Error when requesting temperature: Something went wrong";
         StaticAppender.clearEvents();
-        BDDMockito.given(serialPort.isOpen()).willReturn(true);
-        BDDMockito.given(serialPort.read()).willReturn("ERROR: Something went wrong");
+        BDDMockito.given(serialPortClient.isOpen()).willReturn(true);
+        BDDMockito.given(serialPortClient.read()).willReturn("ERROR: Something went wrong");
         // WHEN
         Executable callGetTemperature = () -> underTest.getTemperature();
         // THEN
         ThermometerException e = assertThrows(ThermometerException.class, callGetTemperature);
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpen();
-        BDDMockito.verify(serialPort, BDDMockito.times(0)).open();
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).write("READTEMP\n");
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).read();
+        BDDMockito.verify(serialPortClient, BDDMockito.times(1)).isOpen();
+        BDDMockito.verify(serialPortClient, BDDMockito.times(0)).open();
+        BDDMockito.verify(serialPortClient, BDDMockito.times(1)).write("READTEMP\n");
+        BDDMockito.verify(serialPortClient, BDDMockito.times(1)).read();
         assertEquals(expectedErrorMessage, StaticAppender.getEvents().get(0).getMessage());
         assertEquals(expectedErrorMessage, e.getMessage());
     }
@@ -84,16 +84,16 @@ class ArduinoThermometerTest {
         // GIVEN
         final String expectedErrorMessage = "Error when requesting temperature: Unable to open serial port.";
         StaticAppender.clearEvents();
-        BDDMockito.given(serialPort.isOpen()).willReturn(false);
-        BDDMockito.given(serialPort.open()).willReturn(false);
+        BDDMockito.given(serialPortClient.isOpen()).willReturn(false);
+        BDDMockito.given(serialPortClient.open()).willReturn(false);
         // WHEN
         Executable callGetTemperature = () -> underTest.getTemperature();
         // THEN
         ThermometerException e = assertThrows(ThermometerException.class, callGetTemperature);
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpen();
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).open();
-        BDDMockito.verify(serialPort, BDDMockito.times(0)).write("READTEMP\n");
-        BDDMockito.verify(serialPort, BDDMockito.times(0)).read();
+        BDDMockito.verify(serialPortClient, BDDMockito.times(1)).isOpen();
+        BDDMockito.verify(serialPortClient, BDDMockito.times(1)).open();
+        BDDMockito.verify(serialPortClient, BDDMockito.times(0)).write("READTEMP\n");
+        BDDMockito.verify(serialPortClient, BDDMockito.times(0)).read();
         assertEquals(expectedErrorMessage, StaticAppender.getEvents().get(0).getMessage());
         assertEquals(expectedErrorMessage, e.getMessage());
     }

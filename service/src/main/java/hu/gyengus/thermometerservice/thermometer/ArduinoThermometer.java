@@ -4,14 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hu.gyengus.thermometerservice.domain.Temperature;
-import hu.gyengus.thermometerservice.serial.SerialPort;
+import hu.gyengus.thermometerservice.serial.SerialPortClient;
 
 public class ArduinoThermometer implements Thermometer {
     private static final Logger LOG = LoggerFactory.getLogger(ArduinoThermometer.class);
-    private SerialPort serialPort;
+    private SerialPortClient serialPortClient;
 
-    public ArduinoThermometer(SerialPort serialPort) {
-        this.serialPort = serialPort;
+    public ArduinoThermometer(SerialPortClient serialPortClient) {
+        this.serialPortClient = serialPortClient;
     }
 
     @Override
@@ -34,11 +34,11 @@ public class ArduinoThermometer implements Thermometer {
     }
     
     private void sendCommand(final String command) {
-        serialPort.write(command + "\n");
+        serialPortClient.write(command + "\n");
     }
     
     private String readAnswer() {
-        return serialPort.read();
+        return serialPortClient.read();
     }
     
     private double parseAnswer(final String answer) {
@@ -49,8 +49,8 @@ public class ArduinoThermometer implements Thermometer {
     }
     
     private void openConnectionIfNeeded() {
-        if (!serialPort.isOpen()) {
-            if (!serialPort.open()) {
+        if (!serialPortClient.isOpen()) {
+            if (!serialPortClient.open()) {
                 throw new RuntimeException("Unable to open serial port.");
             }
         }        
