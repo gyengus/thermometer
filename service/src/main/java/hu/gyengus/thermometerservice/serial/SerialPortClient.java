@@ -20,7 +20,7 @@ public class SerialPortClient {
         this.serialPort = serialPort;
         portName = serialPort.getSystemPortName();
         this.serialPort.setComPortParameters(baudRate, 8, 1, 0);
-        this.serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
+        this.serialPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
         LOG.info("Serial port data: " + portName + " " + baudRate);
     }
 
