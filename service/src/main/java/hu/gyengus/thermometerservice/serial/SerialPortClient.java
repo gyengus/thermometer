@@ -25,19 +25,21 @@ public class SerialPortClient {
     }
 
     public boolean open() {
-        if (serialPort.openPort()) {
-            return true;
+        boolean result = true;
+        if (!serialPort.isOpen() && !serialPort.openPort()) {
+            LOG.error("Unable to open serial port: " + portName);
+            return false;
         }
-        LOG.error("Unable to open serial port: " + portName);
-        return false;
+        return result;
     }
 
     public boolean close() {
-        if (serialPort.closePort()) {
-            return true;
+        boolean result = true;
+        if (serialPort.isOpen() && !serialPort.closePort()) {
+            LOG.error("Unable to close serial port.");
+            result = false;
         }
-        LOG.error("Unable to close serial port.");
-        return false;
+        return result;
     }
 
     public boolean isOpen() {

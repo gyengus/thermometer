@@ -40,35 +40,65 @@ class SerialPortClientTest {
     }
 
     @Test
+    void testOpenShouldTrueWhenPortIsOpened() {
+        // GIVEN
+        BDDMockito.given(serialPort.isOpen()).willReturn(true);
+        // WHEN
+        boolean actual = underTest.open();
+        // THEN
+        assertEquals(true, actual);
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpen();
+        BDDMockito.verify(serialPort, BDDMockito.times(0)).openPort();
+    }
+
+    @Test
     void testOpenShouldFalseWhenPortOpenFailed() {
         // GIVEN
+        BDDMockito.given(serialPort.isOpen()).willReturn(false);
         BDDMockito.given(serialPort.openPort()).willReturn(false);
         // WHEN
         boolean actual = underTest.open();
         // THEN
         assertEquals(false, actual);
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpen();
         BDDMockito.verify(serialPort, BDDMockito.times(1)).openPort();
     }
 
     @Test
     void testCloseShouldTrueWhenPortCloseSuccess() {
         // GIVEN
+        BDDMockito.given(serialPort.isOpen()).willReturn(true);
         BDDMockito.given(serialPort.closePort()).willReturn(true);
         // WHEN
         boolean actual = underTest.close();
         // THEN
         assertEquals(true, actual);
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpen();
         BDDMockito.verify(serialPort, BDDMockito.times(1)).closePort();
+    }
+
+    @Test
+    void testCloseShouldTrueWhenPortIsClosed() {
+        // GIVEN
+        BDDMockito.given(serialPort.isOpen()).willReturn(false);
+        // WHEN
+        boolean actual = underTest.close();
+        // THEN
+        assertEquals(true, actual);
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpen();
+        BDDMockito.verify(serialPort, BDDMockito.times(0)).closePort();
     }
 
     @Test
     void testCloseShouldFalseWhenPortCloseFailed() {
         // GIVEN
+        BDDMockito.given(serialPort.isOpen()).willReturn(true);
         BDDMockito.given(serialPort.closePort()).willReturn(false);
         // WHEN
         boolean actual = underTest.close();
         // THEN
         assertEquals(false, actual);
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpen();
         BDDMockito.verify(serialPort, BDDMockito.times(1)).closePort();
     }
 
