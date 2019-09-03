@@ -21,5 +21,3 @@ test:
     - cd service
     - ./gradlew sonarqube -Dsonar.login=$SONARCLOUD_LOGIN -Dsonar.projectVersion=$CI_COMMIT_SHORT_SHA
     - cd ..
-    - ls -la service/
-    - ls -la $GRADLE_USER_HOME
