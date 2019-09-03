@@ -2,8 +2,9 @@ stages:
   - test
 
 cache:
+  key: thermometer-service-build-cache
   paths:
-     - .gradle
+     - service/.gradle
      - $GRADLE_USER_HOME
 
 test:
@@ -19,3 +20,4 @@ test:
   script:
     - cd service
     - ./gradlew sonarqube -Dsonar.login=$SONARCLOUD_LOGIN -Dsonar.projectVersion=$CI_COMMIT_SHORT_SHA
+    - cd ..
