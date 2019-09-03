@@ -21,7 +21,7 @@ public class SpringConfig {
         return new ArduinoThermometer(serialPortClient());
     }
 
-    @Bean
+    @Bean(destroyMethod = "destroy")
     public SerialPortClient serialPortClient() {
         SerialPort serialPort = SerialPort.getCommPort(env.getProperty("serial.portName"));
         return new SerialPortClient(serialPort, Integer.valueOf(env.getProperty("serial.baudRate")));

@@ -62,6 +62,10 @@ public class SerialPortClient {
         } catch (Exception e) {
             throw new RuntimeException("Error when writing to serial port: " + e.getMessage());
         }
-
+    }
+    
+    public void destroy() {
+        LOG.info("Closing serial port if required");
+        close();
     }
 }
