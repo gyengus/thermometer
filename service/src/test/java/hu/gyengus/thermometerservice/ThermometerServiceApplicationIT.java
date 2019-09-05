@@ -5,6 +5,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,7 +33,7 @@ class ThermometerServiceApplicationIT {
         // WHEN
         MvcResult result = mvc.perform(get("/")).andReturn();
         // THEN
-        assertEquals("{\"measurement\":\"°C\",\"temperature\":3.14}", result.getResponse().getContentAsString());
+        JSONAssert.assertEquals("{\"measurement\":\"°C\",\"temperature\":3.14}", result.getResponse().getContentAsString(), JSONCompareMode.LENIENT);
         assertEquals(200, result.getResponse().getStatus());
     }
 
@@ -43,7 +45,7 @@ class ThermometerServiceApplicationIT {
         // WHEN
         MvcResult result = mvc.perform(get("/")).andReturn();
         // THEN
-        assertEquals("{\"status\":500,\"message\":\"Error when requesting temperature: Unable to open serial port.\"}", result.getResponse().getContentAsString());
+        JSONAssert.assertEquals("{\"status\":500,\"message\":\"Error when requesting temperature: Unable to open serial port.\"}", result.getResponse().getContentAsString(), JSONCompareMode.LENIENT);
         assertEquals(500, result.getResponse().getStatus());
     }
 
@@ -55,7 +57,7 @@ class ThermometerServiceApplicationIT {
         // WHEN
         MvcResult result = mvc.perform(get("/")).andReturn();
         // THEN
-        assertEquals("{\"status\":500,\"message\":\"Error when requesting temperature: Something went wrong\"}", result.getResponse().getContentAsString());
+        JSONAssert.assertEquals("{\"status\":500,\"message\":\"Error when requesting temperature: Something went wrong\"}", result.getResponse().getContentAsString(), JSONCompareMode.LENIENT);
         assertEquals(500, result.getResponse().getStatus());
     }
 
@@ -67,7 +69,7 @@ class ThermometerServiceApplicationIT {
         // WHEN
         MvcResult result = mvc.perform(get("/")).andReturn();
         // THEN
-        assertEquals("{\"status\":500,\"message\":\"Error when requesting temperature: For input string: \\\"Not a number\\\"\"}", result.getResponse().getContentAsString());
+        JSONAssert.assertEquals("{\"status\":500,\"message\":\"Error when requesting temperature: For input string: \\\"Not a number\\\"\"}", result.getResponse().getContentAsString(), JSONCompareMode.LENIENT);
         assertEquals(500, result.getResponse().getStatus());
     }
 }

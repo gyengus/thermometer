@@ -1,8 +1,8 @@
 package hu.gyengus.thermometerservice.domain;
 
 public class Temperature {
+    private static final String measurement = "°C";
     private final double value;
-    private final String measurement = "°C";
     
     public Temperature(final double value) {
         this.value = value;
