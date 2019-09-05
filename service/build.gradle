@@ -1,5 +1,5 @@
 plugins {
-	id 'org.springframework.boot' version '2.2.0.M3'
+	id 'org.springframework.boot' version '2.2.0.M5'
 	id 'java'
 	id "org.sonarqube" version "2.7.1"
 }
@@ -24,7 +24,7 @@ dependencies {
 		exclude group: 'junit', module: 'junit'
 	}
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
-	compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.9'
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.10.0.pr1'
 	// https://mvnrepository.com/artifact/com.fazecast/jSerialComm
 	compile group: 'com.fazecast', name: 'jSerialComm', version: '2.5.1'
 	// https://mvnrepository.com/artifact/ch.qos.logback/logback-core
