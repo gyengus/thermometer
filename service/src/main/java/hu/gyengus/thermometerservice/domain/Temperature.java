@@ -1,7 +1,7 @@
 package hu.gyengus.thermometerservice.domain;
 
 public class Temperature {
-    private static final String measurement = "°C";
+    private static final String MEASUREMENT = "°C";
     private final double value;
     
     public Temperature(final double value) {
@@ -13,6 +13,6 @@ public class Temperature {
     }
     
     public String getMeasurement() {
-        return measurement;
+        return MEASUREMENT;
     }
 }
