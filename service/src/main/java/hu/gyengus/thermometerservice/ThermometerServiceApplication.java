@@ -46,7 +46,7 @@ public class ThermometerServiceApplication {
     }
 
     public static void main(String[] args) {
-        SpringApplication app = new SpringApplication(ThermometerServiceApplication.class);
+        final SpringApplication app = new SpringApplication(ThermometerServiceApplication.class);
         app.run(args);
     }
 
