@@ -140,12 +140,12 @@ class SerialPortClientTest {
     @Test
     void testReadShouldThrowExceptionOnError() {
         // GIVEN
-        RuntimeException expectedException = new RuntimeException("Error");
+        SerialPortException expectedException = new SerialPortException("Error");
         BDDMockito.given(serialPort.getInputStream()).willThrow(expectedException);
         // WHEN
         Executable callRead = () -> underTest.read();
         // THEN
-        RuntimeException e = assertThrows(RuntimeException.class, callRead);
+        SerialPortException e = assertThrows(SerialPortException.class, callRead);
         BDDMockito.verify(serialPort, BDDMockito.times(1)).getInputStream();
         assertEquals("Error when reading serial port: Error", e.getMessage());
     }
@@ -166,12 +166,12 @@ class SerialPortClientTest {
     @Test
     void testWriteShouldThrowExceptionWhenFailed() {
         // GIVEN
-        RuntimeException expectedException = new RuntimeException("Error");
+        SerialPortException expectedException = new SerialPortException("Error");
         BDDMockito.given(serialPort.getOutputStream()).willThrow(expectedException);
         // WHEN
         Executable callWrite = () -> underTest.write("test");
         // THEN
-        RuntimeException e = assertThrows(RuntimeException.class, callWrite);
+        SerialPortException e = assertThrows(SerialPortException.class, callWrite);
         BDDMockito.verify(serialPort, BDDMockito.times(1)).getOutputStream();
         assertEquals("Error when writing to serial port: Error", e.getMessage());
     }
