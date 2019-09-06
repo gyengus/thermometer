@@ -20,4 +20,5 @@ test:
   script:
     - cd service
     - ./gradlew sonarqube -Dsonar.login=$SONARCLOUD_LOGIN -Dsonar.projectVersion=$CI_COMMIT_SHORT_SHA
+    - bash <(curl -s https://codecov.io/bash)
     - cd ..
