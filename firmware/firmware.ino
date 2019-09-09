@@ -1,3 +1,4 @@
+#include<avr/wdt.h>
 #include <OneWire.h>
 #include <timer.h>
 #include "config.h"
@@ -15,6 +16,7 @@ unsigned long lastMeasureTime = 0;
 int ledState = longOff;
 
 void setup(void) {
+  wdt_disable();
   pinMode(LED, OUTPUT);
   Serial.begin(57600);
   detectSensor();
@@ -105,7 +107,8 @@ void detectSensor(void) {
   byte addr[8];
   if (!ds.search(addr)) {
     Serial.println(ERROR_PREFIX + "No sensor detected.");
-    halt();
+    delay(1000);
+    reset();
   }
 
   if (!isCRCValid(addr, 7)) {
@@ -160,5 +163,10 @@ bool toggle_led(void) {
 
 void halt(void) {
   Serial.println("HALTED");
+  while(1);
+}
+
+void reset(void) {
+  wdt_enable(WDTO_15MS);
   while(1);
 }
