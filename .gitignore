@@ -155,6 +155,8 @@ HELP.md
 /.nb-gradle/
 
 
+log/*.txt
+log/*.zip
 *.txt
 *.zip
 .scannerwork

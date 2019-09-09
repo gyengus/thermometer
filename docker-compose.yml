@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  thermometer:
+    image: openjdk:12
+    container_name: thermometer
+    restart: always
+    ports:
+      - 65080:65080
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+    working_dir: /app
+    volumes:
+      - ./service/build/libs/thermometer-service.jar:/app/thermometer-service.jar
+      - ./log:/app/log
+    entrypoint: java -jar /app/thermometer-service.jar
