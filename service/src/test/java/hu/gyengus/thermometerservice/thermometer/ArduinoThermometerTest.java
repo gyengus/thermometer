@@ -63,10 +63,9 @@ class ArduinoThermometerTest {
     }
 
     @Test
-    void testGetTemperatureShouldLogErrorWhenGotAnError() {
+    void testGetTemperatureShouldThrowExceptionWhenGotAnError() {
         // GIVEN
         final String expectedErrorMessage = "Error when requesting temperature: Something went wrong";
-        StaticAppender.clearEvents();
         BDDMockito.given(serialPortClient.isOpen()).willReturn(true);
         BDDMockito.given(serialPortClient.read()).willReturn("ERROR: Something went wrong");
         // WHEN
@@ -77,12 +76,11 @@ class ArduinoThermometerTest {
         BDDMockito.verify(serialPortClient, BDDMockito.times(0)).open();
         BDDMockito.verify(serialPortClient, BDDMockito.times(1)).write(READTEMP_COMMAND);
         BDDMockito.verify(serialPortClient, BDDMockito.times(1)).read();
-        assertEquals(expectedErrorMessage, StaticAppender.getEvents().get(0).getMessage());
         assertEquals(expectedErrorMessage, e.getMessage());
     }
 
     @Test
-    void testGetTemperatureShouldLogErrorWhenSerialPortIsClosedAndCanNotOpen() {
+    void testGetTemperatureShouldThrowExceptionWhenSerialPortIsClosedAndCanNotOpen() {
         // GIVEN
         final String expectedErrorMessage = "Error when requesting temperature: Unable to open serial port.";
         StaticAppender.clearEvents();
@@ -96,7 +94,6 @@ class ArduinoThermometerTest {
         BDDMockito.verify(serialPortClient, BDDMockito.times(1)).open();
         BDDMockito.verify(serialPortClient, BDDMockito.times(0)).write(READTEMP_COMMAND);
         BDDMockito.verify(serialPortClient, BDDMockito.times(0)).read();
-        assertEquals(expectedErrorMessage, StaticAppender.getEvents().get(0).getMessage());
         assertEquals(expectedErrorMessage, e.getMessage());
     }
 }

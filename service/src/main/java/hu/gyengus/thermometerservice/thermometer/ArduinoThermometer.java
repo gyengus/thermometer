@@ -1,14 +1,11 @@
 package hu.gyengus.thermometerservice.thermometer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import hu.gyengus.thermometerservice.domain.Command;
 import hu.gyengus.thermometerservice.domain.Temperature;
+import hu.gyengus.thermometerservice.logging.LoggedException;
 import hu.gyengus.thermometerservice.serial.SerialPortClient;
 
 public class ArduinoThermometer implements Thermometer {
-    private static final Logger LOG = LoggerFactory.getLogger(ArduinoThermometer.class);
     private final SerialPortClient serialPortClient;
 
     public ArduinoThermometer(final SerialPortClient serialPortClient) {
@@ -16,6 +13,7 @@ public class ArduinoThermometer implements Thermometer {
     }
 
     @Override
+    @LoggedException
     public Temperature getTemperature() {
         Temperature temperature;
         try {
@@ -24,7 +22,6 @@ public class ArduinoThermometer implements Thermometer {
             temperature = new Temperature(parseAnswer(readAnswer()));
         } catch (Exception e) {
             final String errorMessage = "Error when requesting temperature: " + e.getMessage();
-            LOG.error(errorMessage);
             throw new ThermometerException(errorMessage);
         }
         return temperature;
@@ -42,6 +39,7 @@ public class ArduinoThermometer implements Thermometer {
         return serialPortClient.read();
     }
 
+    @LoggedException
     private double parseAnswer(final String answer) {
         if (answer.startsWith("ERROR: ")) {
             throw new ThermometerException(answer.substring(7));
@@ -49,6 +47,7 @@ public class ArduinoThermometer implements Thermometer {
         return Double.parseDouble(answer.trim());
     }
 
+    @LoggedException
     private void openConnectionIfNeeded() {
         if (!serialPortClient.isOpen() && !serialPortClient.open()) {
             throw new ThermometerException("Unable to open serial port.");

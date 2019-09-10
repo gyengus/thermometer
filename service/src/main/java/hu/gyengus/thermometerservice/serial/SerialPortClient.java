@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import com.fazecast.jSerialComm.SerialPort;
 
+import hu.gyengus.thermometerservice.logging.LoggedException;
+
 public class SerialPortClient {
     private static final Logger LOG = LoggerFactory.getLogger(SerialPortClient.class);
 
@@ -46,6 +48,7 @@ public class SerialPortClient {
         return serialPort.isOpen();
     }
 
+    @LoggedException
     public String read() {
         String line = null;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(serialPort.getInputStream()))) {
@@ -56,6 +59,7 @@ public class SerialPortClient {
         return line;
     }
 
+    @LoggedException
     public void write(final String text) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(serialPort.getOutputStream()))) {
             writer.write(text);

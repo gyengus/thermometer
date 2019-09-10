@@ -8,14 +8,14 @@
 	</appender>
 
 	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>log/log-${byDay}.txt</file>
+		<file>log/error-${byDay}.txt</file>
 		<append>true</append>
 		<!-- deny all events with a level below WARNING, that is INFO, TRACE and DEBUG -->
 		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
 			<level>WARN</level>
 		</filter>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>log-%d{yyyyMMdd}.zip</fileNamePattern>
+			<fileNamePattern>error-%d{yyyyMMdd}.zip</fileNamePattern>
 			<maxHistory>10</maxHistory>
 		</rollingPolicy>
 		<encoder>
