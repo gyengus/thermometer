@@ -18,12 +18,12 @@ public class SerialPortClient {
     private final String portName;
     private final SerialPort serialPort;
 
-    public SerialPortClient(final SerialPort serialPort, final int baudRate) {
+    public SerialPortClient(final SerialPort serialPort, final int baudRate, final int timeout) {
         this.serialPort = serialPort;
         portName = serialPort.getSystemPortName();
         this.serialPort.setComPortParameters(baudRate, 8, 1, 0);
-        this.serialPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
-        LOG.info("Serial port data: {} {}", portName, baudRate);
+        this.serialPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, timeout, timeout);
+        LOG.info("Serial port name: {}, baudrate: {} bps, timeout: {} ms", portName, baudRate, timeout);
     }
 
     public boolean open() {

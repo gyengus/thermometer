@@ -25,7 +25,7 @@ class SerialPortClientTest {
     @BeforeEach
     void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        underTest = new SerialPortClient(serialPort, 9600);
+        underTest = new SerialPortClient(serialPort, 9600, 2000);
     }
 
     @Test

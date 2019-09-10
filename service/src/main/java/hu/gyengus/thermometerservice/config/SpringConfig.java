@@ -20,6 +20,6 @@ public class SpringConfig {
     @Bean(destroyMethod = "destroy")
     public SerialPortClient serialPortClient(final Environment env) {
         final SerialPort serialPort = SerialPort.getCommPort(env.getProperty("serial.portName"));
-        return new SerialPortClient(serialPort, Integer.valueOf(env.getProperty("serial.baudRate")));
+        return new SerialPortClient(serialPort, Integer.valueOf(env.getProperty("serial.baudRate")), Integer.valueOf(env.getProperty("serial.timeout")));
     }
 }
