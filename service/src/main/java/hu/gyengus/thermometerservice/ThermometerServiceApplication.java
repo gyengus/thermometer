@@ -12,16 +12,13 @@ import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfigu
 import org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.autoconfigure.websocket.servlet.WebSocketServletAutoConfiguration;
-import org.springframework.context.annotation.Import;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import hu.gyengus.thermometerservice.config.SpringConfig;
 import hu.gyengus.thermometerservice.domain.Temperature;
 import hu.gyengus.thermometerservice.thermometer.Thermometer;
 
 @SpringBootApplication
-@Import({ SpringConfig.class })
 @EnableAutoConfiguration(exclude = { MultipartAutoConfiguration.class,
                                      TaskExecutionAutoConfiguration.class,
                                      TaskSchedulingAutoConfiguration.class,
