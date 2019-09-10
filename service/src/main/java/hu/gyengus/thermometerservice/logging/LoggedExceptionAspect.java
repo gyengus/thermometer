@@ -17,7 +17,7 @@ public class LoggedExceptionAspect {
         try {
             return joinPoint.proceed();
         } catch (Exception e) {
-            LOG.error(joinPoint.getSignature() + " " + e.getMessage());
+            LOG.error("{} {}", joinPoint.getSignature(), e.getMessage());
             throw e;
         }
     }
