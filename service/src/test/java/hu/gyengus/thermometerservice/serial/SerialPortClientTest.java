@@ -48,7 +48,7 @@ class SerialPortClientTest {
         // THEN
         assertEquals(true, actual);
         BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpen();
-        BDDMockito.verify(serialPort, BDDMockito.times(0)).openPort();
+        BDDMockito.verify(serialPort, BDDMockito.never()).openPort();
     }
 
     @Test
@@ -86,7 +86,7 @@ class SerialPortClientTest {
         // THEN
         assertEquals(true, actual);
         BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpen();
-        BDDMockito.verify(serialPort, BDDMockito.times(0)).closePort();
+        BDDMockito.verify(serialPort, BDDMockito.never()).closePort();
     }
 
     @Test

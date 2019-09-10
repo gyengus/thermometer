@@ -56,7 +56,7 @@ class ArduinoThermometerTest {
         Temperature actual = underTest.getTemperature();
         // THEN
         BDDMockito.verify(serialPortClient, BDDMockito.times(1)).isOpen();
-        BDDMockito.verify(serialPortClient, BDDMockito.times(0)).open();
+        BDDMockito.verify(serialPortClient, BDDMockito.never()).open();
         BDDMockito.verify(serialPortClient, BDDMockito.times(1)).write(READTEMP_COMMAND);
         BDDMockito.verify(serialPortClient, BDDMockito.times(1)).read();
         assertEquals(temperature, actual.getTemperature());
@@ -73,7 +73,7 @@ class ArduinoThermometerTest {
         // THEN
         ThermometerException e = assertThrows(ThermometerException.class, callGetTemperature);
         BDDMockito.verify(serialPortClient, BDDMockito.times(1)).isOpen();
-        BDDMockito.verify(serialPortClient, BDDMockito.times(0)).open();
+        BDDMockito.verify(serialPortClient, BDDMockito.never()).open();
         BDDMockito.verify(serialPortClient, BDDMockito.times(1)).write(READTEMP_COMMAND);
         BDDMockito.verify(serialPortClient, BDDMockito.times(1)).read();
         assertEquals(expectedErrorMessage, e.getMessage());
@@ -92,8 +92,8 @@ class ArduinoThermometerTest {
         ThermometerException e = assertThrows(ThermometerException.class, callGetTemperature);
         BDDMockito.verify(serialPortClient, BDDMockito.times(1)).isOpen();
         BDDMockito.verify(serialPortClient, BDDMockito.times(1)).open();
-        BDDMockito.verify(serialPortClient, BDDMockito.times(0)).write(READTEMP_COMMAND);
-        BDDMockito.verify(serialPortClient, BDDMockito.times(0)).read();
+        BDDMockito.verify(serialPortClient, BDDMockito.never()).write(READTEMP_COMMAND);
+        BDDMockito.verify(serialPortClient, BDDMockito.never()).read();
         assertEquals(expectedErrorMessage, e.getMessage());
     }
 }
