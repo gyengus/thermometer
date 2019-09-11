@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import hu.gyengus.thermometerservice.domain.Temperature;
 import hu.gyengus.thermometerservice.thermometer.Thermometer;
+import io.micrometer.core.instrument.Counter;
 
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = { MultipartAutoConfiguration.class,
@@ -32,13 +33,16 @@ import hu.gyengus.thermometerservice.thermometer.Thermometer;
 @RestController
 public class ThermometerServiceApplication {
     private final Thermometer thermometer;
+    private Counter thermometerRequests;
 
-    public ThermometerServiceApplication(final Thermometer thermometer) {
+    public ThermometerServiceApplication(final Thermometer thermometer, final Counter thermometerRequests) {
         this.thermometer = thermometer;
+        this.thermometerRequests = thermometerRequests;
     }
 
     @GetMapping("/")
     public Temperature home() {
+        thermometerRequests.increment();
         return thermometer.getTemperature();
     }
 

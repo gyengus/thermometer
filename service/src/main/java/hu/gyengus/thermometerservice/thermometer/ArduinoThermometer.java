@@ -4,6 +4,7 @@ import hu.gyengus.thermometerservice.domain.Command;
 import hu.gyengus.thermometerservice.domain.Temperature;
 import hu.gyengus.thermometerservice.logging.LoggedException;
 import hu.gyengus.thermometerservice.serial.SerialPortClient;
+import io.micrometer.core.annotation.Timed;
 
 public class ArduinoThermometer implements Thermometer {
     private final SerialPortClient serialPortClient;
@@ -14,6 +15,7 @@ public class ArduinoThermometer implements Thermometer {
 
     @Override
     @LoggedException
+    @Timed(value = "timed.getTemperature", description = "Time spent to communicate thermometer")
     public Temperature getTemperature() {
         Temperature temperature;
         try {

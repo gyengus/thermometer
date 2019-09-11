@@ -2,6 +2,7 @@ package hu.gyengus.thermometerservice;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.times;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,17 +14,20 @@ import org.mockito.MockitoAnnotations;
 import hu.gyengus.thermometerservice.domain.Temperature;
 import hu.gyengus.thermometerservice.thermometer.Thermometer;
 import hu.gyengus.thermometerservice.thermometer.ThermometerException;
+import io.micrometer.core.instrument.Counter;
 
 class ThermometerServiceApplicationTest {
     @Mock
     private Thermometer thermometer;
+    @Mock
+    private Counter counter;
 
     private ThermometerServiceApplication underTest;
 
     @BeforeEach
     void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        underTest = new ThermometerServiceApplication(thermometer);
+        underTest = new ThermometerServiceApplication(thermometer, counter);
     }
 
     @Test
@@ -31,9 +35,11 @@ class ThermometerServiceApplicationTest {
         // GIVEN
         Temperature expected = new Temperature(5.5);
         BDDMockito.given(thermometer.getTemperature()).willReturn(expected);
+        BDDMockito.doNothing().when(counter).increment();
         // WHEN
         Temperature actual = underTest.home();
         // THEN
+        BDDMockito.verify(counter, times(1)).increment();
         assertEquals(expected, actual);
     }
 
