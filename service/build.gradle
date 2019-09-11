@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.2.0.M5'
 	id 'java'
 	id "org.sonarqube" version "2.7.1"
+	id "com.gorylenko.gradle-git-properties" version "2.1.0"
 }
 
 apply plugin: 'io.spring.dependency-management'
@@ -38,6 +39,7 @@ test {
 	useJUnitPlatform()
 }
 
+project.tasks["build"].dependsOn "generateGitProperties"
 project.tasks["jacocoTestReport"].dependsOn "build"
 project.tasks["jacocoTestCoverageVerification"].dependsOn "jacocoTestReport"
 project.tasks["sonarqube"].dependsOn "jacocoTestCoverageVerification"
@@ -63,4 +65,8 @@ sonarqube {
 
 bootJar {
    archiveName = "$baseName.$extension"
+}
+
+gitProperties {
+    keys = ['git.build.version', 'git.branch', 'git.commit.id', 'git.commit.id.abbrev', 'git.commit.time', 'git.commit.message.short', 'git.tags']
 }
