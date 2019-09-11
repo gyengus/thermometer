@@ -23,6 +23,7 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 		exclude group: 'junit', module: 'junit'
 	}
+	compile("org.springframework.boot:spring-boot-starter-actuator")
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
 	compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.10.0.pr1'
 	// https://mvnrepository.com/artifact/com.fazecast/jSerialComm
