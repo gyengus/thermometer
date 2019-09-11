@@ -1,7 +1,9 @@
 package hu.gyengus.thermometerservice.thermometer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -95,5 +97,25 @@ class ArduinoThermometerTest {
         BDDMockito.verify(serialPortClient, BDDMockito.never()).write(READTEMP_COMMAND);
         BDDMockito.verify(serialPortClient, BDDMockito.never()).read();
         assertEquals(expectedErrorMessage, e.getMessage());
+    }
+
+    @Test
+    void testIsConnectedShouldReturnTrueWhenSerialPortIsOpen() {
+        // GIVEN
+        BDDMockito.given(serialPortClient.isOpen()).willReturn(true);
+        // WHEN
+        boolean actual = underTest.isConnected();
+        // THEN
+        assertTrue(actual);
+    }
+
+    @Test
+    void testIsConnectedShouldReturnFalseWhenSerialPortIsClosed() {
+        // GIVEN
+        BDDMockito.given(serialPortClient.isOpen()).willReturn(false);
+        // WHEN
+        boolean actual = underTest.isConnected();
+        // THEN
+        assertFalse(actual);
     }
 }

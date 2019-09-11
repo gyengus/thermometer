@@ -53,4 +53,9 @@ public class ArduinoThermometer implements Thermometer {
             throw new ThermometerException("Unable to open serial port.");
         }
     }
+
+    @Override
+    public boolean isConnected() {
+        return serialPortClient.isOpen();
+    }
 }

@@ -5,4 +5,5 @@ import hu.gyengus.thermometerservice.domain.Temperature;
 public interface Thermometer {
 
     Temperature getTemperature();
+    boolean isConnected();
 }
