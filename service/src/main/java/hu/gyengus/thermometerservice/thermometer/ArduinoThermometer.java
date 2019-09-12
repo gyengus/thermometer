@@ -15,7 +15,7 @@ public class ArduinoThermometer implements Thermometer {
 
     @Override
     @LoggedException
-    @Timed(value = "timed.getTemperature", description = "Time spent to communicate thermometer")
+    @Timed(value = "timed.getTemperature", description = "Time spent to communicate thermometer", longTask = true)
     public Temperature getTemperature() {
         Temperature temperature;
         try {
