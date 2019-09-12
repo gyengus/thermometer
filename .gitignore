@@ -160,3 +160,4 @@ log/*.zip
 *.txt
 *.zip
 .scannerwork
+service/work/

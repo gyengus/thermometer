@@ -8,7 +8,7 @@
 	</appender>
 
 	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>log/error-${byDay}.txt</file>
+		<file>log/error-${byDay}.log</file>
 		<append>true</append>
 		<!-- deny all events with a level below WARNING, that is INFO, TRACE and DEBUG -->
 		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
