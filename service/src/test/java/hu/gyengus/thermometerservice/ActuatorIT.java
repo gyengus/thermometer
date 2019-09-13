@@ -87,11 +87,11 @@ public class ActuatorIT {
     }
 
     @Test
-    void testActuatorMetricsThermometerRequestsEndpointShouldReturn404BeforeCallRootEndpoint() throws Exception {
+    void testActuatorMetricsThermometerRequestsEndpointShouldReturnOKBeforeCallRootEndpoint() throws Exception {
         // GIVEN
         // WHEN
         MvcResult result = mvc.perform(get(ACTUATOR_METRICS + "/thermometer.requests")).andReturn();
         // THEN
-        assertEquals(HTTP_STATUS_NOT_FOUND, result.getResponse().getStatus());
+        assertEquals(HTTP_STATUS_OK, result.getResponse().getStatus());
     }
 }
