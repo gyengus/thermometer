@@ -53,6 +53,9 @@ public class SerialPortClient {
         String line = null;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(serialPort.getInputStream()))) {
             line = reader.readLine();
+            if (LOG.isDebugEnabled() ) {
+                LOG.debug("Received from serial port: {}", line);
+            }
         } catch (Exception e) {
             throw new SerialPortException("Error when reading serial port: " + e.getMessage());
         }
@@ -62,6 +65,9 @@ public class SerialPortClient {
     @LoggedException
     public void write(final String text) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(serialPort.getOutputStream()))) {
+            if (LOG.isDebugEnabled() ) {
+                LOG.debug("Wtire to serial port: {}", text);
+            }
             writer.write(text);
         } catch (Exception e) {
             throw new SerialPortException("Error when writing to serial port: " + e.getMessage());

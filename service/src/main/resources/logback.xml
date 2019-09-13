@@ -29,4 +29,5 @@
 	</root>
 
 	<logger name="org.springframework" level="info" />
+	<logger name="hu.gyengus.thermometerservice.serial" level="debug" />
 </configuration>
