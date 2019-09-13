@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import hu.gyengus.thermometerservice.domain.Temperature;
 import hu.gyengus.thermometerservice.thermometer.Thermometer;
 import io.micrometer.core.instrument.Counter;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = { MultipartAutoConfiguration.class,
@@ -31,6 +33,7 @@ import io.micrometer.core.instrument.Counter;
                                      RestTemplateAutoConfiguration.class
                                    })
 @RestController
+@Api
 public class ThermometerServiceApplication {
     private final Thermometer thermometer;
     private Counter thermometerRequests;
@@ -41,6 +44,7 @@ public class ThermometerServiceApplication {
     }
 
     @GetMapping("/")
+    @ApiOperation(value = "Returns the current temperature")
     public Temperature home() {
         thermometerRequests.increment();
         return thermometer.getTemperature();

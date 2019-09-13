@@ -25,6 +25,8 @@ dependencies {
 		exclude group: 'junit', module: 'junit'
 	}
 	compile("org.springframework.boot:spring-boot-starter-actuator")
+	// https://mvnrepository.com/artifact/org.springframework.plugin/spring-plugin-core
+	compile group: 'org.springframework.plugin', name: 'spring-plugin-core', version: '1.2.0.RELEASE'
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
 	compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.10.0.pr1'
 	// https://mvnrepository.com/artifact/com.fazecast/jSerialComm
@@ -35,6 +37,10 @@ dependencies {
 	compile group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.4'
 	// https://mvnrepository.com/artifact/io.micrometer/micrometer-core
 	compile group: 'io.micrometer', name: 'micrometer-core', version: '1.2.1'
+	// https://mvnrepository.com/artifact/io.springfox/springfox-swagger2
+	compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+	// https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui
+	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 }
 
 test {
