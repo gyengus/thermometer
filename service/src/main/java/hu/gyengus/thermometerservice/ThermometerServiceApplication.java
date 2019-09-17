@@ -20,6 +20,10 @@ import hu.gyengus.thermometerservice.thermometer.Thermometer;
 import io.micrometer.core.instrument.Counter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Example;
+import io.swagger.annotations.ExampleProperty;
 
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = { MultipartAutoConfiguration.class,
@@ -44,7 +48,11 @@ public class ThermometerServiceApplication {
     }
 
     @GetMapping("/")
-    @ApiOperation(value = "Returns the current temperature")
+    @ApiOperation(value = "Returns the current temperature", response = Temperature.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK", examples = @Example(@ExampleProperty(mediaType = "*/*", value = "{\"temperature\": 24.5, \"measurement\": \"°C\"}"))),
+            @ApiResponse(code = 500, message = "Error", examples = @Example(@ExampleProperty(mediaType = "*/*", value = "{\"status\": 500, \"message\": \"Something went wrong\"}")))
+    })
     public Temperature home() {
         thermometerRequests.increment();
         return thermometer.getTemperature();
