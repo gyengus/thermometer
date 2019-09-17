@@ -14,6 +14,8 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger.web.UiConfiguration;
+import springfox.documentation.swagger.web.UiConfigurationBuilder;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
@@ -21,6 +23,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class SwaggerConfig {
     @Autowired
     private Environment env;
+
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -32,10 +35,20 @@ public class SwaggerConfig {
                    .apiInfo(apiInfo());
     }
 
+    @Bean
+    UiConfiguration uiConfig() {
+        return UiConfigurationBuilder
+               .builder()
+               .defaultModelsExpandDepth(-1)
+               .defaultModelExpandDepth(2)
+               .filter(false)
+               .build();
+    }
+
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title(env.getProperty("info.app.name"))
-                .contact(new Contact("Gyengus", "https://github.com/gyengus/thermometer", ""))
-                .build();
+                   .title(env.getProperty("info.app.name"))
+                   .contact(new Contact("Gyengus", "https://github.com/gyengus/thermometer", ""))
+                   .build();
     }
 }
