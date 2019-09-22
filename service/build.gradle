@@ -29,8 +29,8 @@ dependencies {
 	compile group: 'org.springframework.plugin', name: 'spring-plugin-core', version: '1.2.0.RELEASE'
 	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
 	compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.10.0.pr1'
-	// https://mvnrepository.com/artifact/com.fazecast/jSerialComm
-	compile group: 'com.fazecast', name: 'jSerialComm', version: '2.5.1'
+	// https://mvnrepository.com/artifact/org.scream3r/jssc
+	compile group: 'org.scream3r', name: 'jssc', version: '2.8.0'
 	// https://mvnrepository.com/artifact/ch.qos.logback/logback-core
 	compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
 	// https://mvnrepository.com/artifact/org.aspectj/aspectjweaver

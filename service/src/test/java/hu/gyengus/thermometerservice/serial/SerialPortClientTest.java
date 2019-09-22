@@ -3,10 +3,6 @@ package hu.gyengus.thermometerservice.serial;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -14,7 +10,7 @@ import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.fazecast.jSerialComm.SerialPort;
+import jssc.SerialPort;
 
 class SerialPortClientTest {
     @Mock
@@ -29,7 +25,7 @@ class SerialPortClientTest {
     }
 
     @Test
-    void testOpenShouldTrueWhenPortOpenSuccess() {
+    void testOpenShouldTrueWhenPortOpenSuccess() throws jssc.SerialPortException {
         // GIVEN
         BDDMockito.given(serialPort.openPort()).willReturn(true);
         // WHEN
@@ -40,139 +36,182 @@ class SerialPortClientTest {
     }
 
     @Test
-    void testOpenShouldTrueWhenPortIsOpened() {
+    void testOpenShouldTrueWhenPortIsOpened() throws jssc.SerialPortException {
         // GIVEN
-        BDDMockito.given(serialPort.isOpen()).willReturn(true);
+        BDDMockito.given(serialPort.isOpened()).willReturn(true);
         // WHEN
         boolean actual = underTest.open();
         // THEN
         assertEquals(true, actual);
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpen();
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpened();
         BDDMockito.verify(serialPort, BDDMockito.never()).openPort();
     }
 
     @Test
-    void testOpenShouldFalseWhenPortOpenFailed() {
+    void testOpenShouldFalseWhenPortOpenFailed() throws jssc.SerialPortException {
         // GIVEN
-        BDDMockito.given(serialPort.isOpen()).willReturn(false);
+        BDDMockito.given(serialPort.isOpened()).willReturn(false);
         BDDMockito.given(serialPort.openPort()).willReturn(false);
         // WHEN
         boolean actual = underTest.open();
         // THEN
         assertEquals(false, actual);
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpen();
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpened();
         BDDMockito.verify(serialPort, BDDMockito.times(1)).openPort();
     }
 
     @Test
-    void testCloseShouldTrueWhenPortCloseSuccess() {
+    void testOpenShouldThrowExceptionWhenPortOpenFailed() throws jssc.SerialPortException {
         // GIVEN
-        BDDMockito.given(serialPort.isOpen()).willReturn(true);
+        String expectedErrorMessage = "Error when opening serial port: Port name - ; Method name - ; Exception type - Error.";
+        BDDMockito.given(serialPort.isOpened()).willReturn(false);
+        BDDMockito.given(serialPort.openPort()).willThrow(new jssc.SerialPortException("", "", "Error"));
+        // WHEN
+        Executable callOpen = () -> underTest.open();
+        // THEN
+        SerialPortException e = assertThrows(SerialPortException.class, callOpen);
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpened();
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).openPort();
+        assertEquals(expectedErrorMessage, e.getMessage());
+    }
+
+    @Test
+    void testCloseShouldTrueWhenPortCloseSuccess() throws jssc.SerialPortException {
+        // GIVEN
+        BDDMockito.given(serialPort.isOpened()).willReturn(true);
         BDDMockito.given(serialPort.closePort()).willReturn(true);
         // WHEN
         boolean actual = underTest.close();
         // THEN
         assertEquals(true, actual);
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpen();
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpened();
         BDDMockito.verify(serialPort, BDDMockito.times(1)).closePort();
     }
 
     @Test
-    void testCloseShouldTrueWhenPortIsClosed() {
+    void testCloseShouldTrueWhenPortIsClosed() throws jssc.SerialPortException {
         // GIVEN
-        BDDMockito.given(serialPort.isOpen()).willReturn(false);
+        BDDMockito.given(serialPort.isOpened()).willReturn(false);
         // WHEN
         boolean actual = underTest.close();
         // THEN
         assertEquals(true, actual);
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpen();
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpened();
         BDDMockito.verify(serialPort, BDDMockito.never()).closePort();
     }
 
     @Test
-    void testCloseShouldFalseWhenPortCloseFailed() {
+    void testCloseShouldFalseWhenPortCloseFailed() throws jssc.SerialPortException {
         // GIVEN
-        BDDMockito.given(serialPort.isOpen()).willReturn(true);
+        BDDMockito.given(serialPort.isOpened()).willReturn(true);
         BDDMockito.given(serialPort.closePort()).willReturn(false);
         // WHEN
         boolean actual = underTest.close();
         // THEN
         assertEquals(false, actual);
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpen();
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpened();
         BDDMockito.verify(serialPort, BDDMockito.times(1)).closePort();
+    }
+
+    @Test
+    void testCloseShouldThrowExceptionWhenPortCloseThrowsException() throws jssc.SerialPortException {
+        // GIVEN
+        String expectedErrorMessage = "Error when closing serial port: Port name - ; Method name - ; Exception type - Error.";
+        BDDMockito.given(serialPort.isOpened()).willReturn(true);
+        BDDMockito.given(serialPort.closePort()).willThrow(new jssc.SerialPortException("", "", "Error"));
+        // WHEN
+        Executable callClose = () -> underTest.close();
+        // THEN
+        SerialPortException e = assertThrows(SerialPortException.class, callClose);
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpened();
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).closePort();
+        assertEquals(expectedErrorMessage, e.getMessage());
     }
 
     @Test
     void testIsOpenShouldTrueIfPortOpened() {
         // GIVEN
-        BDDMockito.given(serialPort.isOpen()).willReturn(true);
+        BDDMockito.given(serialPort.isOpened()).willReturn(true);
         // WHEN
         boolean actual = underTest.isOpen();
         // THEN
         assertEquals(true, actual);
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpen();
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpened();
     }
 
     @Test
     void testIsOpenShouldFalseIfPortClosed() {
         // GIVEN
-        BDDMockito.given(serialPort.isOpen()).willReturn(false);
+        BDDMockito.given(serialPort.isOpened()).willReturn(false);
         // WHEN
         boolean actual = underTest.isOpen();
         // THEN
         assertEquals(false, actual);
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpen();
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpened();
     }
 
     @Test
-    void testRead() {
+    void testRead() throws jssc.SerialPortException {
         // GIVEN
         final String expectedString = "test data";
-        InputStream inputStream = new ByteArrayInputStream(expectedString.getBytes());
-        BDDMockito.given(serialPort.getInputStream()).willReturn(inputStream);
+        BDDMockito.given(serialPort.readString()).willReturn(expectedString);
+        BDDMockito.given(serialPort.getInputBufferBytesCount()).willReturn(5);
         // WHEN
         String actual = underTest.read();
         // THEN
         assertEquals(expectedString, actual);
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).getInputStream();
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).readString();
     }
 
     @Test
-    void testReadShouldThrowExceptionOnError() {
+    void testReadShouldThrowExceptionOnError() throws jssc.SerialPortException {
         // GIVEN
-        SerialPortException expectedException = new SerialPortException("Error");
-        BDDMockito.given(serialPort.getInputStream()).willThrow(expectedException);
+        String expectedErrorMessage = "Error when reading serial port: Port name - ; Method name - ; Exception type - Error.";
+        jssc.SerialPortException expectedException = new jssc.SerialPortException("", "", "Error");
+        BDDMockito.given(serialPort.readString()).willThrow(expectedException);
+        BDDMockito.given(serialPort.getInputBufferBytesCount()).willReturn(5);
         // WHEN
         Executable callRead = () -> underTest.read();
         // THEN
         SerialPortException e = assertThrows(SerialPortException.class, callRead);
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).getInputStream();
-        assertEquals("Error when reading serial port: Error", e.getMessage());
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).readString();
+        assertEquals(expectedErrorMessage, e.getMessage());
     }
 
     @Test
-    void testWrite() {
+    void testWrite() throws jssc.SerialPortException {
         // GIVEN
         final String testString = "test data";
-        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        BDDMockito.given(serialPort.getOutputStream()).willReturn(outputStream);
+        BDDMockito.given(serialPort.writeString(testString)).willReturn(true);
         // WHEN
         underTest.write(testString);
         // THEN
-        assertEquals(testString, outputStream.toString());
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).getOutputStream();
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).writeString(testString);
     }
 
     @Test
-    void testWriteShouldThrowExceptionWhenFailed() {
+    void testWriteShouldThrowExceptionWhenFailed() throws jssc.SerialPortException {
         // GIVEN
-        SerialPortException expectedException = new SerialPortException("Error");
-        BDDMockito.given(serialPort.getOutputStream()).willThrow(expectedException);
+        String expectedErrorMessage = "Error when writing to serial port.";
+        BDDMockito.given(serialPort.writeString("test")).willReturn(false);
         // WHEN
         Executable callWrite = () -> underTest.write("test");
         // THEN
         SerialPortException e = assertThrows(SerialPortException.class, callWrite);
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).getOutputStream();
-        assertEquals("Error when writing to serial port: Error", e.getMessage());
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).writeString("test");
+        assertEquals(expectedErrorMessage, e.getMessage());
+    }
+
+    @Test
+    void testWriteShouldThrowExceptionWhenSerialPortThrowsExcerption() throws jssc.SerialPortException {
+        // GIVEN
+        String expectedErrorMessage = "Error when writing to serial port: Port name - ; Method name - ; Exception type - Error.";
+        BDDMockito.given(serialPort.writeString("test")).willThrow(new jssc.SerialPortException("", "", "Error"));
+        // WHEN
+        Executable callWrite = () -> underTest.write("test");
+        // THEN
+        SerialPortException e = assertThrows(SerialPortException.class, callWrite);
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).writeString("test");
+        assertEquals(expectedErrorMessage, e.getMessage());
     }
 }

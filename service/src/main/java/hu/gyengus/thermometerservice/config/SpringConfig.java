@@ -4,14 +4,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
-import com.fazecast.jSerialComm.SerialPort;
-
 import hu.gyengus.thermometerservice.serial.SerialPortClient;
 import hu.gyengus.thermometerservice.thermometer.ArduinoThermometer;
 import hu.gyengus.thermometerservice.thermometer.Thermometer;
 import io.micrometer.core.aop.TimedAspect;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import jssc.SerialPort;
 
 @Configuration
 public class SpringConfig {
@@ -22,7 +21,7 @@ public class SpringConfig {
 
     @Bean(destroyMethod = "destroy")
     public SerialPortClient serialPortClient(final Environment env) {
-        final SerialPort serialPort = SerialPort.getCommPort(env.getProperty("serial.portName"));
+        final SerialPort serialPort = new SerialPort(env.getProperty("serial.portName"));
         return new SerialPortClient(serialPort, Integer.valueOf(env.getProperty("serial.baudRate")), Integer.valueOf(env.getProperty("serial.timeout")));
     }
 
