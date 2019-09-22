@@ -8,14 +8,14 @@ import jssc.SerialPort;
 
 public class SerialPortClient {
     private static final Logger LOG = LoggerFactory.getLogger(SerialPortClient.class);
-    private final int BAUDRATE;
+    private final int baudRate;
 
     private final String portName;
     private final SerialPort serialPort;
 
     public SerialPortClient(final SerialPort serialPort, final int baudRate, final int timeout) {
         this.serialPort = serialPort;
-        this.BAUDRATE = baudRate;
+        this.baudRate = baudRate;
         portName = serialPort.getPortName();
         LOG.info("Serial port name: {}, baudrate: {} bps, timeout: {} ms", portName, baudRate, timeout);
     }
@@ -26,7 +26,7 @@ public class SerialPortClient {
         try {
             if (!serialPort.isOpened()) {
                 if (serialPort.openPort()) {
-                    this.serialPort.setParams(BAUDRATE, 8, 1, SerialPort.PARITY_NONE);
+                    this.serialPort.setParams(baudRate, 8, 1, SerialPort.PARITY_NONE);
                 } else {
                     LOG.error("Unable to open serial port: {}", portName);
                     result = false;
