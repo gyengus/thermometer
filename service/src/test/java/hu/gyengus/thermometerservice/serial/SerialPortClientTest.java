@@ -8,20 +8,28 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import hu.gyengus.thermometerservice.Observer;
+import hu.gyengus.thermometerservice.TemperatureSubject;
+import hu.gyengus.thermometerservice.thermometer.Thermometer;
 import jssc.SerialPort;
+import jssc.SerialPortEvent;
 
 class SerialPortClientTest {
     @Mock
     private SerialPort serialPort;
+
+    @Mock(extraInterfaces = { TemperatureSubject.class, Observer.class })
+    private Thermometer thermometer;
 
     private SerialPortClient underTest;
 
     @BeforeEach
     void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        underTest = new SerialPortClient(serialPort, 9600, 2000);
+        underTest = new SerialPortClient(serialPort, 9600);
     }
 
     @Test
@@ -151,34 +159,6 @@ class SerialPortClientTest {
     }
 
     @Test
-    void testRead() throws jssc.SerialPortException {
-        // GIVEN
-        final String expectedString = "test data";
-        BDDMockito.given(serialPort.readString()).willReturn(expectedString);
-        BDDMockito.given(serialPort.getInputBufferBytesCount()).willReturn(5);
-        // WHEN
-        String actual = underTest.read();
-        // THEN
-        assertEquals(expectedString, actual);
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).readString();
-    }
-
-    @Test
-    void testReadShouldThrowExceptionOnError() throws jssc.SerialPortException {
-        // GIVEN
-        String expectedErrorMessage = "Error when reading serial port: Port name - ; Method name - ; Exception type - Error.";
-        jssc.SerialPortException expectedException = new jssc.SerialPortException("", "", "Error");
-        BDDMockito.given(serialPort.readString()).willThrow(expectedException);
-        BDDMockito.given(serialPort.getInputBufferBytesCount()).willReturn(5);
-        // WHEN
-        Executable callRead = () -> underTest.read();
-        // THEN
-        SerialPortException e = assertThrows(SerialPortException.class, callRead);
-        BDDMockito.verify(serialPort, BDDMockito.times(1)).readString();
-        assertEquals(expectedErrorMessage, e.getMessage());
-    }
-
-    @Test
     void testWrite() throws jssc.SerialPortException {
         // GIVEN
         final String testString = "test data";
@@ -203,7 +183,7 @@ class SerialPortClientTest {
     }
 
     @Test
-    void testWriteShouldThrowExceptionWhenSerialPortThrowsExcerption() throws jssc.SerialPortException {
+    void testWriteShouldThrowExceptionWhenSerialPortThrowsException() throws jssc.SerialPortException {
         // GIVEN
         String expectedErrorMessage = "Error when writing to serial port: Port name - ; Method name - ; Exception type - Error.";
         BDDMockito.given(serialPort.writeString("test")).willThrow(new jssc.SerialPortException("", "", "Error"));
@@ -213,5 +193,36 @@ class SerialPortClientTest {
         SerialPortException e = assertThrows(SerialPortException.class, callWrite);
         BDDMockito.verify(serialPort, BDDMockito.times(1)).writeString("test");
         assertEquals(expectedErrorMessage, e.getMessage());
+    }
+
+    @Test
+    void testSerialEventShouldCallObserverUpdateWhenReceivedData() throws jssc.SerialPortException {
+        // GIVEN
+        final String dataFromSerial = "Data";
+        BDDMockito.given(serialPort.readString()).willReturn(dataFromSerial);
+        SerialPortEvent serialPortEvent = Mockito.mock(SerialPortEvent.class);
+        BDDMockito.given(serialPortEvent.isRXCHAR()).willReturn(true);
+        Observer observer = Mockito.mock(Observer.class);
+        BDDMockito.doNothing().when(observer).update(dataFromSerial);
+        // WHEN
+        underTest.setObserver(observer);
+        underTest.serialEvent(serialPortEvent);
+        // THEN
+        BDDMockito.verify(observer, BDDMockito.times(1)).update(dataFromSerial);
+    }
+
+    @Test
+    void testSerialEventShouldThrowExceptionWhenGotException() throws jssc.SerialPortException {
+        // GIVEN
+        jssc.SerialPortException expectedException = new jssc.SerialPortException("", "", "Error");
+        BDDMockito.given(serialPort.readString()).willThrow(expectedException);
+        SerialPortEvent serialPortEvent = Mockito.mock(SerialPortEvent.class);
+        BDDMockito.given(serialPortEvent.isRXCHAR()).willReturn(true);
+        // WHEN
+        Executable callSerialEvent = () -> underTest.serialEvent(serialPortEvent);
+        // THEN
+        SerialPortException e = assertThrows(SerialPortException.class, callSerialEvent);
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).readString();
+        assertEquals("Error when handle SerialPortEvent: Port name - ; Method name - ; Exception type - Error.", e.getMessage());
     }
 }

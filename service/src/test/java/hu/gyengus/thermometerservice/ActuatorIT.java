@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,7 +29,7 @@ public class ActuatorIT {
     @Autowired
     private MockMvc mvc;
 
-    @MockBean
+    @MockBean(extraInterfaces = { TemperatureSubject.class, Observer.class })
     private Thermometer thermometer;
 
     @Test
@@ -53,9 +54,11 @@ public class ActuatorIT {
     @Test
     void testActuatorHealthEndpointShouldReturn503WhenThermometerDoesNotWork() throws Exception {
         // GIVEN
+        Mockito.when(thermometer.isConnected()).thenReturn(false);
         // WHEN
         MvcResult result = mvc.perform(get(ACTUATOR_HEALTH)).andReturn();
         // THEN
+        Mockito.verify(thermometer, BDDMockito.times(1)).isConnected();
         assertEquals(HTTP_STATUS_UNAVAILABLE, result.getResponse().getStatus());
     }
 

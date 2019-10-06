@@ -1,24 +1,21 @@
 package hu.gyengus.thermometerservice;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.times;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import hu.gyengus.thermometerservice.domain.Temperature;
 import hu.gyengus.thermometerservice.thermometer.Thermometer;
-import hu.gyengus.thermometerservice.thermometer.ThermometerException;
 import io.micrometer.core.instrument.Counter;
 
 class ThermometerServiceApplicationTest {
-    @Mock
+    @Mock(extraInterfaces = { TemperatureSubject.class, Observer.class })
     private Thermometer thermometer;
+
     @Mock
     private Counter counter;
 
@@ -34,26 +31,22 @@ class ThermometerServiceApplicationTest {
     void testHome() {
         // GIVEN
         Temperature expected = new Temperature(5.5);
-        BDDMockito.given(thermometer.getTemperature()).willReturn(expected);
+        underTest.update(expected);
         BDDMockito.doNothing().when(counter).increment();
         // WHEN
         Temperature actual = underTest.home();
         // THEN
-        BDDMockito.verify(counter, times(1)).increment();
+        BDDMockito.verify(counter, BDDMockito.times(1)).increment();
         assertEquals(expected, actual);
     }
 
     @Test
-    void testHomeShouldThrowExceptionWhenGotError() {
+    void testStartTemperatureMeasurement() {
         // GIVEN
-        StaticAppender.clearEvents();
-        Exception expectedException = new ThermometerException("Something went wrong");
-        BDDMockito.given(thermometer.getTemperature()).willThrow(expectedException);
+        BDDMockito.doNothing().when(thermometer).sendReadCommand();
         // WHEN
-        Executable callHome = () -> underTest.home();
+        underTest.startTemperatureMeasurement();
         // THEN
-        ThermometerException e = assertThrows(ThermometerException.class, callHome);
-        assertEquals("Something went wrong", e.getMessage());
+        BDDMockito.verify(thermometer, BDDMockito.times(1)).sendReadCommand();
     }
-
 }

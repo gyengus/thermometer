@@ -1,17 +1,19 @@
 package hu.gyengus.thermometerservice;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.autoconfigure.http.codec.CodecsAutoConfiguration;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
-import org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration;
 import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.autoconfigure.websocket.servlet.WebSocketServletAutoConfiguration;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +26,6 @@ import io.swagger.annotations.ApiOperation;
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = { MultipartAutoConfiguration.class,
                                      TaskExecutionAutoConfiguration.class,
-                                     TaskSchedulingAutoConfiguration.class,
                                      ValidationAutoConfiguration.class,
                                      WebSocketServletAutoConfiguration.class,
                                      CodecsAutoConfiguration.class,
@@ -34,12 +35,15 @@ import io.swagger.annotations.ApiOperation;
                                    })
 @RestController
 @Api
-public class ThermometerServiceApplication {
+public class ThermometerServiceApplication implements TemperatureObserver {
+    private static final Logger LOG = LoggerFactory.getLogger(ThermometerServiceApplication.class);
     private final Thermometer thermometer;
+    private Temperature temperature;
     private Counter thermometerRequests;
 
     public ThermometerServiceApplication(final Thermometer thermometer, final Counter thermometerRequests) {
         this.thermometer = thermometer;
+        ((TemperatureSubject) this.thermometer).setObserver(this);
         this.thermometerRequests = thermometerRequests;
     }
 
@@ -47,7 +51,7 @@ public class ThermometerServiceApplication {
     @ApiOperation(value = "Returns the current temperature")
     public Temperature home() {
         thermometerRequests.increment();
-        return thermometer.getTemperature();
+        return temperature;
     }
 
     public static void main(String[] args) {
@@ -55,4 +59,15 @@ public class ThermometerServiceApplication {
         app.run(args);
     }
 
+    @Scheduled(fixedDelayString = "${serial.readIntervall}")
+    public void startTemperatureMeasurement() {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Scheduled sendReadCommand call");
+        }
+        thermometer.sendReadCommand();
+    }
+
+    public void update(final Temperature temperature) {
+        this.temperature = temperature;
+    }
 }
