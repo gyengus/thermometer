@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import hu.gyengus.thermometerservice.domain.Temperature;
+import hu.gyengus.thermometerservice.logging.LoggedException;
 import hu.gyengus.thermometerservice.thermometer.Thermometer;
 import io.micrometer.core.instrument.Counter;
 import io.swagger.annotations.Api;
@@ -60,6 +61,7 @@ public class ThermometerServiceApplication implements TemperatureObserver {
     }
 
     @Scheduled(fixedDelayString = "${serial.readIntervall}")
+    @LoggedException
     public void startTemperatureMeasurement() {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Scheduled sendReadCommand call");
