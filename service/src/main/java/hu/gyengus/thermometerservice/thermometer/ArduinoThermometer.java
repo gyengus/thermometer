@@ -52,6 +52,7 @@ public class ArduinoThermometer implements Thermometer, Observer, TemperatureSub
                     TimeUnit.MILLISECONDS.sleep(waitAfterOpenSerialPort);
                 } catch (InterruptedException e) {
                     LOG.error("Error while sleeping: {}", e.getMessage());
+                    Thread.currentThread().interrupt();
                 }
             } else {
                 throw new ThermometerException("Unable to open serial port.");
