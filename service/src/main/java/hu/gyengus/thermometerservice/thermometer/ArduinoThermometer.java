@@ -19,7 +19,6 @@ public class ArduinoThermometer implements Thermometer, Observer, TemperatureSub
     private int waitAfterOpenSerialPort;
     private static final Logger LOG = LoggerFactory.getLogger(ArduinoThermometer.class);
     private final SerialPortClient serialPortClient;
-    private Temperature temperature;
     private TemperatureObserver observer;
 
     public ArduinoThermometer(final SerialPortClient serialPortClient) {
@@ -71,8 +70,7 @@ public class ArduinoThermometer implements Thermometer, Observer, TemperatureSub
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Received data, parse it and notifying observer");
             }
-            temperature = new Temperature(parseAnswer(message));
-            observer.update(temperature);
+            observer.update(new Temperature(parseAnswer(message)));
         }
     }
 
