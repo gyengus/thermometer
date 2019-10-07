@@ -80,5 +80,4 @@ public class ArduinoThermometer implements Thermometer, Observer, TemperatureSub
     public void setObserver(final TemperatureObserver observer) {
         this.observer = observer;
     }
-
 }
