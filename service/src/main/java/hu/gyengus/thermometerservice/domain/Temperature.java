@@ -42,8 +42,6 @@ public class Temperature {
         if (getClass() != obj.getClass())
             return false;
         Temperature other = (Temperature) obj;
-        if (Double.doubleToLongBits(value) != Double.doubleToLongBits(other.value))
-            return false;
-        return true;
+        return (value == other.value);
     }
 }
