@@ -212,6 +212,37 @@ class SerialPortClientTest {
     }
 
     @Test
+    void testSerialEventShouldNotCallObserverUpdateWhenDoNotReceivedData() throws jssc.SerialPortException {
+        // GIVEN
+        final String dataFromSerial = "Data";
+        BDDMockito.given(serialPort.readString()).willReturn(dataFromSerial);
+        SerialPortEvent serialPortEvent = Mockito.mock(SerialPortEvent.class);
+        BDDMockito.given(serialPortEvent.isRXCHAR()).willReturn(false);
+        Observer observer = Mockito.mock(Observer.class);
+        BDDMockito.doNothing().when(observer).update(dataFromSerial);
+        // WHEN
+        underTest.setObserver(observer);
+        underTest.serialEvent(serialPortEvent);
+        // THEN
+        BDDMockito.verify(observer, BDDMockito.never()).update(dataFromSerial);
+    }
+
+    @Test
+    void testSerialEventShouldNotCallObserverUpdateWhenReceivedDataButNotSetObserver() throws jssc.SerialPortException {
+        // GIVEN
+        final String dataFromSerial = "Data";
+        BDDMockito.given(serialPort.readString()).willReturn(dataFromSerial);
+        SerialPortEvent serialPortEvent = Mockito.mock(SerialPortEvent.class);
+        BDDMockito.given(serialPortEvent.isRXCHAR()).willReturn(true);
+        Observer observer = Mockito.mock(Observer.class);
+        BDDMockito.doNothing().when(observer).update(dataFromSerial);
+        // WHEN
+        underTest.serialEvent(serialPortEvent);
+        // THEN
+        BDDMockito.verify(observer, BDDMockito.never()).update(dataFromSerial);
+    }
+
+    @Test
     void testSerialEventShouldThrowExceptionWhenGotException() throws jssc.SerialPortException {
         // GIVEN
         jssc.SerialPortException expectedException = new jssc.SerialPortException("", "", "Error");
