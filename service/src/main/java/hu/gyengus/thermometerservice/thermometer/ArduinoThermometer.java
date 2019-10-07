@@ -16,7 +16,7 @@ import hu.gyengus.thermometerservice.serial.SerialPortClient;
 
 public class ArduinoThermometer implements Thermometer, Observer, TemperatureSubject {
     @Value("${serial.readIntervall:5000}")
-    private int WAIT_AFTER_OPEN_SERIAL_PORT;
+    private int waitAfterOpenSerialPort;
     private static final Logger LOG = LoggerFactory.getLogger(ArduinoThermometer.class);
     private final SerialPortClient serialPortClient;
     private Temperature temperature;
@@ -50,7 +50,7 @@ public class ArduinoThermometer implements Thermometer, Observer, TemperatureSub
         if (!serialPortClient.isOpen()) {
             if (serialPortClient.open()) {
                 try {
-                    TimeUnit.MILLISECONDS.sleep(WAIT_AFTER_OPEN_SERIAL_PORT);
+                    TimeUnit.MILLISECONDS.sleep(waitAfterOpenSerialPort);
                 } catch (InterruptedException e) {
                     LOG.error("Error while sleeping: {}", e.getMessage());
                 }
