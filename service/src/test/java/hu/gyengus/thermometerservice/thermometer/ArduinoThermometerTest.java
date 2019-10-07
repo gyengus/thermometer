@@ -16,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import hu.gyengus.thermometerservice.Observer;
 import hu.gyengus.thermometerservice.TemperatureObserver;
 import hu.gyengus.thermometerservice.TemperatureSubject;
+import hu.gyengus.thermometerservice.domain.Temperature;
 import hu.gyengus.thermometerservice.serial.SerialPortClient;
 
 class ArduinoThermometerTest {
@@ -54,6 +55,18 @@ class ArduinoThermometerTest {
     }
 
     @Test
+    void testOpenConnectionIfNeededShouldThrowExceptionWhenFailedToOpenSerialPort() {
+        // GIVEN
+        BDDMockito.given(serialPortClient.isOpen()).willReturn(false);
+        BDDMockito.given(serialPortClient.open()).willReturn(false);
+        // WHEN
+        Executable callOpenConnectionIfNeeded = () -> underTest.openConnectionIfNeeded();
+        // THEN
+        ThermometerException e = assertThrows(ThermometerException.class, callOpenConnectionIfNeeded);
+        assertEquals("Unable to open serial port.", e.getMessage());
+    }
+
+    @Test
     void testSendReadCommandWhenSerialPortIsOpen() {
         // GIVEN
         BDDMockito.given(serialPortClient.isOpen()).willReturn(true);
@@ -77,6 +90,19 @@ class ArduinoThermometerTest {
     }
 
     @Test
+    void testUpdateShouldCallObserverUpdateWhenGotANumber() {
+        // GIVEN
+        final Temperature expectedTemperature = new Temperature(5.5);
+        TemperatureObserver observer = Mockito.mock(TemperatureObserver.class);
+        BDDMockito.doNothing().when(observer).update(expectedTemperature);
+        ((TemperatureSubject) underTest).setObserver(observer);
+        // WHEN
+        ((Observer) underTest).update("5.5");
+        // THEN
+        BDDMockito.verify(observer, BDDMockito.times(1)).update(expectedTemperature);
+    }
+
+    @Test
     void testUpdateShouldThrowExceptionWhenGotError() {
         // GIVEN
         TemperatureObserver observer = Mockito.mock(TemperatureObserver.class);
@@ -87,6 +113,20 @@ class ArduinoThermometerTest {
         // THEN
         ThermometerException e = assertThrows(ThermometerException.class, callUpdate);
         assertEquals("Something went wrong", e.getMessage());
+        BDDMockito.verify(observer, BDDMockito.never()).update(null);
+    }
+
+    @Test
+    void testUpdateShouldThrowExceptionWhenGotNotANumber() {
+        // GIVEN
+        TemperatureObserver observer = Mockito.mock(TemperatureObserver.class);
+        BDDMockito.doNothing().when(observer).update(null);
+        ((TemperatureSubject) underTest).setObserver(observer);
+        // WHEN
+        Executable callUpdate = () -> ((Observer) underTest).update("Not A Number");
+        // THEN
+        NumberFormatException e = assertThrows(NumberFormatException.class, callUpdate);
+        assertEquals("For input string: \"Not A Number\"", e.getMessage());
         BDDMockito.verify(observer, BDDMockito.never()).update(null);
     }
 }
