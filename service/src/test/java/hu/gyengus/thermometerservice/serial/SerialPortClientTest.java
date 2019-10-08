@@ -256,4 +256,14 @@ class SerialPortClientTest {
         BDDMockito.verify(serialPort, BDDMockito.times(1)).readString();
         assertEquals("Error when handle SerialPortEvent: Port name - ; Method name - ; Exception type - Error.", e.getMessage());
     }
+
+    @Test
+    void testDestroyShouldCallClose() {
+        // GIVEN
+        BDDMockito.given(serialPort.isOpened()).willReturn(false); // close() call serialPort.isOpened()
+        // WHEN
+        underTest.destroy();
+        // THEN
+        BDDMockito.verify(serialPort, BDDMockito.times(1)).isOpened();
+    }
 }
