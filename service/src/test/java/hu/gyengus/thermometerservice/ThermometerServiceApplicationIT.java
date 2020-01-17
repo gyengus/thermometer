@@ -13,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import hu.gyengus.thermometerservice.data.DBClient;
 import hu.gyengus.thermometerservice.domain.Temperature;
 import hu.gyengus.thermometerservice.serial.SerialPortClient;
 import hu.gyengus.thermometerservice.thermometer.Thermometer;
@@ -31,6 +32,9 @@ class ThermometerServiceApplicationIT {
 
     @Autowired
     private ThermometerServiceApplication thermometerServiceApplication;
+
+    @MockBean
+    private DBClient dBClient;
 
     @Test
     void testHomeEndpointShouldReturnTemperature() throws Exception {

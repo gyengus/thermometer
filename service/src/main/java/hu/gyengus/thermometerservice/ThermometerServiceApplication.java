@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import hu.gyengus.thermometerservice.data.DBClient;
 import hu.gyengus.thermometerservice.domain.Temperature;
 import hu.gyengus.thermometerservice.logging.LoggedException;
 import hu.gyengus.thermometerservice.thermometer.Thermometer;
@@ -39,13 +40,15 @@ import io.swagger.annotations.ApiOperation;
 public class ThermometerServiceApplication implements TemperatureObserver {
     private static final Logger LOG = LoggerFactory.getLogger(ThermometerServiceApplication.class);
     private final Thermometer thermometer;
+    private final DBClient dBClient;
     private Temperature temperature;
     private Counter thermometerRequests;
 
-    public ThermometerServiceApplication(final Thermometer thermometer, final Counter thermometerRequests) {
+    public ThermometerServiceApplication(final Thermometer thermometer, final Counter thermometerRequests, final DBClient dBClient) {
         this.thermometer = thermometer;
         ((TemperatureSubject) this.thermometer).setObserver(this);
         this.thermometerRequests = thermometerRequests;
+        this.dBClient = dBClient;
     }
 
     @GetMapping("/")
@@ -71,5 +74,8 @@ public class ThermometerServiceApplication implements TemperatureObserver {
 
     public void update(final Temperature temperature) {
         this.temperature = temperature;
+        if (dBClient != null && temperature != null) {
+            dBClient.sendTemperature(temperature);
+        }
     }
 }

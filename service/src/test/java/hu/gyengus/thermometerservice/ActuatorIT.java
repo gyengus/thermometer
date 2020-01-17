@@ -13,6 +13,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import com.jayway.jsonpath.JsonPath;
+
+import hu.gyengus.thermometerservice.data.DBClient;
 import hu.gyengus.thermometerservice.thermometer.Thermometer;
 
 @SpringBootTest(classes = { ThermometerServiceApplication.class })
@@ -32,6 +35,9 @@ public class ActuatorIT {
     @MockBean(extraInterfaces = { TemperatureSubject.class, Observer.class })
     private Thermometer thermometer;
 
+    @MockBean
+    private DBClient dBClient;
+
     @Test
     void testActuatorEndpointShouldReturnOK() throws Exception {
         // GIVEN
@@ -49,6 +55,7 @@ public class ActuatorIT {
         MvcResult result = mvc.perform(get(ACTUATOR_HEALTH)).andReturn();
         // THEN
         assertEquals(HTTP_STATUS_OK, result.getResponse().getStatus());
+        assertEquals("UP", JsonPath.parse(result.getResponse().getContentAsString()).read("$.details.thermometer.status"));
     }
 
     @Test
@@ -60,6 +67,7 @@ public class ActuatorIT {
         // THEN
         Mockito.verify(thermometer, BDDMockito.times(1)).isConnected();
         assertEquals(HTTP_STATUS_UNAVAILABLE, result.getResponse().getStatus());
+        assertEquals("DOWN", JsonPath.parse(result.getResponse().getContentAsString()).read("$.details.thermometer.status"));
     }
 
     @Test
