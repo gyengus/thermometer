@@ -42,6 +42,7 @@ dependencies {
 	// https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui
 	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 	compile 'io.micrometer:micrometer-registry-influx:latest.release'
+	compile 'org.influxdb:influxdb-java:2.17'
 }
 
 test {

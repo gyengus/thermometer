@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import hu.gyengus.thermometerservice.data.DBClient;
+import hu.gyengus.thermometerservice.data.InfluxDBClient;
 import hu.gyengus.thermometerservice.serial.SerialPortClient;
 import hu.gyengus.thermometerservice.thermometer.ArduinoThermometer;
 import hu.gyengus.thermometerservice.thermometer.Thermometer;
@@ -35,5 +37,14 @@ public class SpringConfig {
     @Bean
     public Counter thermometerRequests(final MeterRegistry meterRegistry) {
         return Counter.builder("thermometer.requests").register(meterRegistry);
+    }
+
+    @Bean
+    public DBClient dBClient(final Environment env) {
+        DBClient dBClient = null;
+        if (!env.getProperty("management.metrics.export.influx.uri").isEmpty() && !env.getProperty("management.metrics.export.influx.user-name").isEmpty()) {
+            dBClient = new InfluxDBClient(env.getProperty("management.metrics.export.influx.uri"), env.getProperty("management.metrics.export.influx.user-name"), env.getProperty("management.metrics.export.influx.password"));
+        }
+        return dBClient;
     }
 }

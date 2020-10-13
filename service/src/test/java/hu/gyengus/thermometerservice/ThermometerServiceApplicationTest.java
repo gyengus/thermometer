@@ -8,6 +8,7 @@ import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import hu.gyengus.thermometerservice.data.DBClient;
 import hu.gyengus.thermometerservice.domain.Temperature;
 import hu.gyengus.thermometerservice.thermometer.Thermometer;
 import io.micrometer.core.instrument.Counter;
@@ -19,12 +20,15 @@ class ThermometerServiceApplicationTest {
     @Mock
     private Counter counter;
 
+    @Mock
+    private DBClient dBClient;
+
     private ThermometerServiceApplication underTest;
 
     @BeforeEach
     void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        underTest = new ThermometerServiceApplication(thermometer, counter);
+        underTest = new ThermometerServiceApplication(thermometer, counter, dBClient);
     }
 
     @Test
