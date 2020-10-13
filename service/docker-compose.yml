@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+  thermometer:
+    image: gyengus/thermometer-service
+    container_name: thermometer
+    restart: always
+    ports:
+      - 65080:65080
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+    working_dir: /app
+    volumes:
+      - ./application.properties:/app/application.properties
+      - ./log:/app/log
