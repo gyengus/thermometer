@@ -1,64 +1,76 @@
 plugins {
-	id 'org.springframework.boot' version '2.2.0.M5'
 	id 'java'
+	id 'org.springframework.boot' version '3.5.0'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.graalvm.buildtools.native' version '0.10.6'
 	id "org.sonarqube" version "2.7.1"
-	id "com.gorylenko.gradle-git-properties" version "2.1.0"
+	id "com.gorylenko.gradle-git-properties" version "2.5.0"
+	id 'jacoco'
+	id 'com.adarshr.test-logger' version '4.0.0'
 }
-
-apply plugin: 'io.spring.dependency-management'
-apply plugin: "jacoco"
 
 group = 'hu.gyengus'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(24)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
 
 repositories {
 	mavenCentral()
-	maven { url 'https://repo.spring.io/snapshot' }
-	maven { url 'https://repo.spring.io/milestone' }
 }
 
 dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	testImplementation('org.springframework.boot:spring-boot-starter-test') {
-		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-		exclude group: 'junit', module: 'junit'
-	}
-	compile("org.springframework.boot:spring-boot-starter-actuator")
-	// https://mvnrepository.com/artifact/org.springframework.plugin/spring-plugin-core
-	compile group: 'org.springframework.plugin', name: 'spring-plugin-core', version: '1.2.0.RELEASE'
-	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
-	compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.10.0.pr1'
-	// https://mvnrepository.com/artifact/org.scream3r/jssc
-	compile group: 'org.scream3r', name: 'jssc', version: '2.8.0'
-	// https://mvnrepository.com/artifact/ch.qos.logback/logback-core
-	compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
-	// https://mvnrepository.com/artifact/org.aspectj/aspectjweaver
-	compile group: 'org.aspectj', name: 'aspectjweaver', version: '1.9.4'
-	// https://mvnrepository.com/artifact/io.micrometer/micrometer-core
-	compile group: 'io.micrometer', name: 'micrometer-core', version: '1.2.1'
-	// https://mvnrepository.com/artifact/io.springfox/springfox-swagger2
-	compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
-	// https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui
-	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
-	compile 'io.micrometer:micrometer-registry-influx:latest.release'
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-aop
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	// https://mvnrepository.com/artifact/io.github.java-native/jssc
+	implementation 'io.github.java-native:jssc:2.10.0'
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8'
 }
 
-test {
+tasks.named('test') {
 	useJUnitPlatform()
 }
 
 project.tasks["build"].dependsOn "generateGitProperties"
-project.tasks["jacocoTestReport"].dependsOn "build"
-project.tasks["jacocoTestCoverageVerification"].dependsOn "jacocoTestReport"
 project.tasks["sonarqube"].dependsOn "jacocoTestCoverageVerification"
 
+test {
+	finalizedBy jacocoTestReport // report is always generated after tests run
+}
+
 jacocoTestReport {
+	dependsOn test
     reports {
-        xml.enabled true
-        html.enabled true
-        html.destination file("${buildDir}/jacocoHtml")
+		xml.required = false
+		csv.required = false
+		html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
     }
+}
+
+jacocoTestCoverageVerification {
+	dependsOn jacocoTestReport
+}
+
+testlogger {
+	theme 'mocha'
 }
 
 sonarqube {
@@ -74,9 +86,10 @@ sonarqube {
 }
 
 bootJar {
-   archiveName = "$baseName.$extension"
+	archiveFileName = "${archiveBaseName.get()}.${archiveExtension.get()}"
 }
 
 gitProperties {
+	dotGitDirectory = file('../.git')
     keys = ['git.build.version', 'git.branch', 'git.commit.id', 'git.commit.id.abbrev', 'git.commit.time', 'git.commit.message.short', 'git.tags']
 }

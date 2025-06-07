@@ -1,14 +1,13 @@
 package hu.gyengus.thermometerservice.domain;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(description = "The temperature value and measurement")
+@Schema(description = "The temperature value and measurement")
 public class Temperature {
-    @ApiModelProperty(example = "°C", value = "The measurement of the value")
+    @Schema(example = "°C", description = "The measurement of the value")
     private static final String MEASUREMENT = "°C";
 
-    @ApiModelProperty(example = "24.5", value = "The value")
+    @Schema(example = "24.5", description = "The value")
     private final double value;
 
     public Temperature(final double value) {

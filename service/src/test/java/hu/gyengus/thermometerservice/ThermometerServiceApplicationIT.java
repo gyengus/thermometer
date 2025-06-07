@@ -9,7 +9,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -20,10 +20,10 @@ import hu.gyengus.thermometerservice.thermometer.Thermometer;
 @SpringBootTest(classes = { ThermometerServiceApplication.class })
 @AutoConfigureMockMvc
 class ThermometerServiceApplicationIT {
-    @MockBean
+    @MockitoBean
     private SerialPortClient serialPortClient;
 
-    @MockBean(extraInterfaces = { TemperatureSubject.class, Observer.class })
+    @MockitoBean(extraInterfaces = { TemperatureSubject.class, Observer.class })
     private Thermometer thermometer;
 
     @Autowired

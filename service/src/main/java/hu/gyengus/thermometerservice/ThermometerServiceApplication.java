@@ -1,5 +1,7 @@
 package hu.gyengus.thermometerservice;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -13,6 +15,7 @@ import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfigu
 import org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.autoconfigure.websocket.servlet.WebSocketServletAutoConfiguration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,8 +24,6 @@ import hu.gyengus.thermometerservice.domain.Temperature;
 import hu.gyengus.thermometerservice.logging.LoggedException;
 import hu.gyengus.thermometerservice.thermometer.Thermometer;
 import io.micrometer.core.instrument.Counter;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = { MultipartAutoConfiguration.class,
@@ -34,13 +35,14 @@ import io.swagger.annotations.ApiOperation;
                                      ErrorMvcAutoConfiguration.class,
                                      RestTemplateAutoConfiguration.class
                                    })
+@EnableAspectJAutoProxy
 @RestController
-@Api
+@Tag(name = "ThermometerService", description = "Thermometer service API")
 public class ThermometerServiceApplication implements TemperatureObserver {
     private static final Logger LOG = LoggerFactory.getLogger(ThermometerServiceApplication.class);
     private final Thermometer thermometer;
     private Temperature temperature;
-    private Counter thermometerRequests;
+    private final Counter thermometerRequests;
 
     public ThermometerServiceApplication(final Thermometer thermometer, final Counter thermometerRequests) {
         this.thermometer = thermometer;
@@ -49,7 +51,7 @@ public class ThermometerServiceApplication implements TemperatureObserver {
     }
 
     @GetMapping("/")
-    @ApiOperation(value = "Returns the current temperature")
+    @Operation(summary = "Returns the current temperature")
     public Temperature home() {
         thermometerRequests.increment();
         return temperature;

@@ -14,8 +14,8 @@ import org.springframework.test.web.servlet.MvcResult;
 @AutoConfigureMockMvc
 public class SwaggerIT {
     private static final int HTTP_STATUS_OK = 200;
-    private static final String SWAGGER_JSON_URL = "/v2/api-docs";
-    private static final String SWAGGER_UI_URL = "/swagger-ui.html";
+    private static final String SWAGGER_JSON_URL = "/v3/api-docs";
+    private static final String SWAGGER_UI_URL = "/swagger-ui/index.html";
 
     @Autowired
     private MockMvc mvc;
