@@ -2,7 +2,7 @@ version: '2'
 
 services:
   thermometer:
-    image: ghcr.io/graalvm/graalvm-community:24
+    image: ghcr.io/graalvm/jdk-community:24
     container_name: thermometer
     restart: always
     ports:

@@ -3,10 +3,13 @@ package hu.gyengus.thermometerservice;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
+import hu.gyengus.thermometerservice.serial.SerialPortClient;
+import hu.gyengus.thermometerservice.thermometer.Thermometer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -19,6 +22,12 @@ public class SwaggerIT {
 
     @Autowired
     private MockMvc mvc;
+
+    @MockitoBean(extraInterfaces = { TemperatureSubject.class, Observer.class })
+    private Thermometer thermometer;
+
+    @MockitoBean
+    private SerialPortClient serialPortClient;
 
     @Test
     void testSwaggerJsonEndpointShouldReturnOK() throws Exception {

@@ -3,9 +3,9 @@ package hu.gyengus.thermometerservice;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
+import hu.gyengus.thermometerservice.serial.SerialPortClient;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,6 +32,9 @@ public class ActuatorIT {
 
     @MockitoBean(extraInterfaces = { TemperatureSubject.class, Observer.class })
     private Thermometer thermometer;
+
+    @MockitoBean
+    private SerialPortClient serialPortClient;
 
     @Test
     void testActuatorEndpointShouldReturnOK() throws Exception {

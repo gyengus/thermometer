@@ -9,7 +9,7 @@ cache:
 
 test:
   stage: test
-  image: ghcr.io/graalvm/graalvm-community:24
+  image: ghcr.io/graalvm/jdk-community:24
   artifacts:
     paths:
       - service/build/libs/thermometer-service.jar
