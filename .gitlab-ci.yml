@@ -1,5 +1,6 @@
 stages:
   - test
+  - buildJar
 
 cache:
   key: thermometer-service-build-cache
@@ -7,8 +8,8 @@ cache:
      - service/.gradle
      - $GRADLE_USER_HOME
 
-test:
-  stage: test
+buildJar:
+  stage: buildJar
   image: ghcr.io/graalvm/graalvm-community:24
   artifacts:
     paths:
@@ -17,8 +18,26 @@ test:
     - java --version
     - pwd
     - echo $GRADLE_USER_HOME
-  script:
     - cd service
+  script:
+    - ./gradlew bootJar 
+  after_script:
+    - cd ..
+
+test:
+  stage: test
+  image: ghcr.io/graalvm/graalvm-community:24
+  artifacts:
+    paths:
+      - service/build/reports
+      - service/build/jacocoHtml
+  before_script:
+    - java --version
+    - pwd
+    - echo $GRADLE_USER_HOME
+    - cd service
+  script:
     - ./gradlew sonar -Dsonar.token=$SONAR_TOKEN -Dsonar.projectVersion=$CI_COMMIT_SHORT_SHA
     - bash <(curl -s https://codecov.io/bash)
+  after_script:
     - cd ..
